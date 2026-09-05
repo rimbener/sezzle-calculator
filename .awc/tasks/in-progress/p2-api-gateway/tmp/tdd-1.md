@@ -26,3 +26,5 @@ refactor:subtask-1 → `apps/calc-service/src/app.test.ts` (existing) — pins t
 5. RED index.test.ts barrel → GREEN index.ts exports `calculateResponseSchema`, `errorResponseSchema`, `STATUS_BY_CODE`, the two messages.
 6. RED repo scan for a second `STATUS_BY_CODE` declaration (failed naming `apps/calc-service/src/app.ts`) → GREEN calc-service imports the contract's map (the refactor move). The scan first sat in errors.test.ts and broke `@repo/contracts`' check-types (no `@types/node` there); relocated unchanged to `apps/calc-service/src/status-map.test.ts` rather than adding Node types to the framework-free contract package.
 7. Docs: `packages/contracts/README.md` and the two AGENTS.md entries (`@repo/contracts`: six codes, response schemas, `STATUS_BY_CODE`; `apps/calc-service`: imports the map, `status-map.test.ts`). Gate green.
+
+closing-commit: 9f9870a
