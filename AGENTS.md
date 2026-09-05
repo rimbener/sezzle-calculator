@@ -4,7 +4,7 @@ This file provides guidance to Agents like Claude Code (claude.ai/code) when wor
 
 ## What this is
 
-A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`, mostly **not yet built**) is a React SPA plus two backend microservices. Today the frontend app, the shared UI package and the shared contract package (`@repo/contracts`) exist; neither service is built yet.
+A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`, mostly **not yet built**) is a React SPA plus two backend microservices. Today the frontend app, the shared UI package, the shared contract package (`@repo/contracts`) and the calculation domain of `calc-service` (pure operations, registry, `calculate` — no HTTP surface yet) exist; the gateway is not built.
 
 `docs/` is the source of truth for scope and is worth reading before non-trivial work:
 
@@ -38,7 +38,7 @@ Node >= 24 is pinned via `engines` in the root `package.json`. `devEngines.packa
 - Turbo rejects a `devEngines.packageManager.version` range spanning more than one major (`>=10` fails with `invalid_dev_engines_package_manager_field`), so the range cannot be left open.
 - `^11.0.0` is the major that stock Node 24 ships, matching `engines.node`. On an older npm every command prints an `EBADDEVENGINES` warning — that is the warning working as intended, not a misconfiguration; the fix is Node 24.
 
-Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`); `packages/contracts/src/*.test.ts` is the first suite, and `apps/sezzle-calculator` and `packages/ui` still have none. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
+Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`); `packages/contracts/src/*.test.ts` and `apps/calc-service/src/**/*.test.ts` are the suites so far, and `apps/sezzle-calculator` and `packages/ui` still have none. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
 
 ## Monorepo layout
 
@@ -47,11 +47,12 @@ npm workspaces (`apps/*`, `packages/*`) orchestrated by Turborepo.
 - `apps/sezzle-calculator` — Vite 8 + React 19 SPA. The React Compiler is enabled via `@rolldown/plugin-babel` + `reactCompilerPreset` in `vite.config.ts`; do not hand-write `useMemo`/`useCallback` that the compiler already covers.
 - `packages/ui` (`@repo/ui`) — the design-system component library.
 - `packages/contracts` (`@repo/contracts`) — the shared calculate-API contract: the seven operation names and their operand counts, the Zod request schema, the `{ result }` and `{ error: { code, message } }` shapes, the five error codes and every error message string. Consumed as source with no build step; see its README.
+- `apps/calc-service` — the calculation service, internal and never browser-facing. Today it holds the domain only: one pure function per operation under `src/operations/`, `registry.ts` mapping each contract operation name to its function, `calculation-error.ts` (the typed failure carrying a contract error code), and `calculate.ts` (lookup, run, reject a non-finite result). Build-free like `@repo/contracts` — relative imports carry `.ts` extensions and `erasableSyntaxOnly` is on; it has no `dev`/`start` script until `src/server.ts` exists. Tests import no HTTP module (`domain-purity.test.ts` enforces it).
 - `packages/eslint-config` (`@repo/eslint-config`), `packages/typescript-config` (`@repo/typescript-config`) — shared configs consumed via `extends`.
 
 One known rough edge to be aware of rather than "fix" by accident:
 
-- `apps/sezzle-calculator` uses its **own** flat ESLint config (`@stylistic` recommended: no semicolons, single quotes) and does **not** extend `@repo/eslint-config`. `packages/ui` and `packages/contracts` do extend it (Prettier-compatible, semicolons, double quotes). Match the file you are editing.
+- `apps/sezzle-calculator` uses its **own** flat ESLint config (`@stylistic` recommended: no semicolons, single quotes) and does **not** extend `@repo/eslint-config`. `packages/ui`, `packages/contracts` and `apps/calc-service` do extend it (Prettier-compatible, semicolons, double quotes). Match the file you are editing.
 
 ## @repo/ui
 

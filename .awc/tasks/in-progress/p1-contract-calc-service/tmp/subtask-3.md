@@ -2,7 +2,7 @@
 
 - **slice:** 2 — the calculation domain
 - **criteria:** AC-6, AC-7, AC-8, AC-9, AC-17, AC-18
-- **status:** todo
+- **status:** done
 - **paths:** `apps/calc-service/package.json`, `apps/calc-service/tsconfig.json`, `apps/calc-service/eslint.config.mjs`, `apps/calc-service/vitest.config.ts`, `apps/calc-service/README.md`, `apps/calc-service/src/operations/*.ts`, `apps/calc-service/src/operations/registry.ts`, `apps/calc-service/src/calculation-error.ts`, `apps/calc-service/src/calculate.ts`, `apps/calc-service/src/**/*.test.ts`, `package-lock.json`
 
 The workspace: private, `"type": "module"`, depending on `@repo/contracts`, `hono`, `@hono/node-server` and `zod`; dev dependencies `@repo/eslint-config`, `@repo/typescript-config`, `@types/node`, `eslint`, `typescript`, `vitest`. Scripts, matching the existing workspaces: `lint`, `check-types`, `test` (`vitest run --passWithNoTests`). **No `dev` or `start` script yet** — those name `src/server.ts`, which subtask-5 supplies, and a root `turbo run dev` would otherwise fan out to a script whose entry file does not exist (AC-17). Vitest runs in the `node` environment. Tsconfig shape as in subtask-1.

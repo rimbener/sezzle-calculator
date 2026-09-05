@@ -1,0 +1,25 @@
+{
+  "name": "calc-service",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.1",
+    "@repo/contracts": "*",
+    "hono": "^4.13.7",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/node": "^24.13.3",
+    "eslint": "10.9.1",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.0"
+  }
+}
