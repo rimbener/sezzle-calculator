@@ -18,6 +18,7 @@ Commits on `task/<task>`, cut from the branch you launched on:
 | one `feat(<scope>): …` per slice, plus a small trail commit recording its closing hash | the TDD implementer |
 | fix commits after the review and the DoD, where findings existed | the TDD implementer |
 | the comment rewrite | the shrinker |
+| `chore(spec-to-code): open <task> for the build` | the committer |
 | `chore(spec-to-code): <task> task trail` | the committer |
 | `chore(spec-to-code): archive <task> task trail` | the committer |
 
@@ -73,15 +74,16 @@ reports each node as it lands.
 | # | id | type | does | ends on |
 | --- | --- | --- | --- | --- |
 | 1 | `open-task` | run | `scripts/open-task.sh` moves `spec-ready/<task>` to `in-progress/<task>`; a resumed run passes through | exit 0 |
-| 2 | `install` | run | `npm ci --silent` | exit 0 |
-| 3 | `build` | loop, cap 8 | per slice: `implementer_tdd` builds it red→green→refactor, `reviewer_slice` runs the suite and reviews the slice's diff, `implementer_tdd` fixes every finding, commits and records the closing hash | `DONE` once every slice is built |
-| 4 | `review` | loop, cap 2 | the full gate, `reviewer_engineering` over the whole diff against `main`, `implementer_tdd` fixes every finding and commits, the gate again | `DONE` once every finding in `review.md` is resolved |
-| 5 | `shrink-comments` | agent | `text_shrinker` rewrites comments changed since `main`, proves the code unchanged, runs the gate, commits | `trimmed` |
-| 6 | `shrink-gate` | run | the full gate | exit 0 |
-| 7 | `dod` | loop, cap 2 | `dod_validator` re-runs the checklist, `implementer_tdd` closes gaps and commits | `DONE` once `dod.md` is all-pass |
-| 8 | `commit-trail` | agent | `committer` stages `.awc/tasks/in-progress/<task>` and commits | `committed` / `unchanged` |
-| 9 | `finish` | run | `scripts/finish-task.sh` moves the trail to `.awc/tasks/done/<task>/` | exit 0 |
-| 10 | `commit-archive` | agent | `committer` stages the moved paths and commits | `committed` / `unchanged` |
+| 2 | `commit-open` | agent | `committer` stages the moved paths and commits, so every later diff shows only the slice's own work | `committed` / `unchanged` |
+| 3 | `install` | run | `npm ci --silent` | exit 0 |
+| 4 | `build` | loop, cap 8 | per slice: `implementer_tdd` builds it red→green→refactor, `reviewer_slice` runs the suite and reviews the slice's diff, `implementer_tdd` fixes every finding, commits and records the closing hash | `DONE` once every slice is built |
+| 5 | `review` | loop, cap 2 | the full gate, `reviewer_engineering` over the whole diff against `main`, `implementer_tdd` fixes every finding and commits, the gate again | `DONE` once every finding in `review.md` is resolved |
+| 6 | `shrink-comments` | agent | `text_shrinker` rewrites comments changed since `main`, proves the code unchanged, runs the gate, commits | `trimmed` |
+| 7 | `shrink-gate` | run | the full gate | exit 0 |
+| 8 | `dod` | loop, cap 2 | `dod_validator` re-runs the checklist, `implementer_tdd` closes gaps and commits | `DONE` once `dod.md` is all-pass |
+| 9 | `commit-trail` | agent | `committer` stages `.awc/tasks/in-progress/<task>` and commits | `committed` / `unchanged` |
+| 10 | `finish` | run | `scripts/finish-task.sh` moves the trail to `.awc/tasks/done/<task>/` | exit 0 |
+| 11 | `commit-archive` | agent | `committer` stages the moved paths and commits | `committed` / `unchanged` |
 
 Every node runs in order; each one reads what the one before it wrote.
 

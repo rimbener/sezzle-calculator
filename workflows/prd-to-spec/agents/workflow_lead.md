@@ -85,9 +85,9 @@ step is collected — `<id> -> ok` for a successful `run:`, `<id> -> <signal>`
 for an agent. A `wait:` that collected without a halt is `<wait-id> -> ok`.
 A run-ending turn ends with exactly one of:
 
-- `complete -> <where the run's artifacts landed>` — the directory the
-  workflow's last trail-moving node moved the task trail to, otherwise the
-  path its own last node wrote to
+- `complete -> <where the run's artifacts landed>` — `.awc/tasks/spec-ready/<task>/`
+  where the workflow hands a task trail off, otherwise the path its own last
+  node wrote to
 - `halted -> <step>: <why>`
 - `blocked -> <what is missing or invalid>`
 

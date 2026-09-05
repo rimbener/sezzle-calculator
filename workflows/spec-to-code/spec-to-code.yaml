@@ -15,6 +15,14 @@ nodes:
   - id: open-task
     run: workflows/spec-to-code/scripts/open-task.sh {{task}}
 
+  # Records the move, so the bundle is in history before the first slice's
+  # diff is read and every later diff shows only the slice's own work.
+  - id: commit-open
+    agent: agents/committer.md
+    prompt: "Task: {{task}}. Mode: commit. Paths: .awc/tasks/spec-ready/{{task}} .awc/tasks/in-progress/{{task}}. Message: chore(spec-to-code): open {{task}} for the build"
+    expect: [committed, unchanged]
+    allowed_tools: [read, search, shell, web]
+
   # A fresh worktree has no node_modules.
   - id: install
     run: npm ci --silent
