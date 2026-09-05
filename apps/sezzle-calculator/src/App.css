@@ -1,0 +1,8 @@
+/* The calculator column: one shell, centred, capped at the design system's shell width. */
+.calculator {
+  display: grid;
+  gap: var(--space-5);
+  max-width: var(--shell-max);
+  margin: var(--space-7) auto;
+  padding: 0 var(--space-4);
+}

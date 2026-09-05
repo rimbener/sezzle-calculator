@@ -8,6 +8,7 @@ import { Card } from "./card";
 import { Display } from "./display";
 import { Input } from "./input";
 import { Key } from "./key";
+import { Keypad } from "./keypad";
 import { Toggle } from "./toggle";
 import type { BadgeTone } from "./badge";
 import type { LampState } from "./busy-lamp";
@@ -134,8 +135,13 @@ export function DesignSystem() {
               <Key face="number" label="7" disabled />
             </div>
           </Specimen>
-          <Specimen label="keypad · span">
-            <div className="ds-keypad">
+        </div>
+      </Section>
+
+      <Section title="Keypad">
+        <div className="ds-grid">
+          <Specimen label="four columns · span">
+            <Keypad>
               <Key face="clear" label="AC" span={2} onPress={() => setActiveKey(null)} />
               <Key face="function" label="%" ariaLabel="Percentage" />
               <Key
@@ -158,7 +164,7 @@ export function DesignSystem() {
               <Key face="number" label="0" span={2} />
               <Key face="number" label="." ariaLabel="Decimal point" />
               <Key face="equals" label="=" ariaLabel="Equals" />
-            </div>
+            </Keypad>
           </Specimen>
         </div>
       </Section>

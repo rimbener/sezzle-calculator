@@ -117,12 +117,13 @@ defaults; Vitest tests with the downstream mocked.
 /prd-to-spec p3-calculator-ui FE-1, FE-3 and Open Question 5 + UI half of FE-8: calculator UI and input state machine
 ```
 
-**In scope:** digit pad, decimal point, sign toggle, all seven operation keys,
+**In scope:** digit pad, decimal point, all seven operation keys,
 equals and clear, and the display; entry-level validation (one decimal point,
 15-significant-digit cap, equals inert while input is invalid); and the input
 state machine itself. This is the run that settles **Open Question 5** —
 operator pressed mid-entry, digit after a result, operator replacement, error
-recovery, leading zeros, sign toggle.
+recovery, leading zeros — and drops the `+/-` key permanently, since flipping
+a sign is local arithmetic FE-2 forbids.
 
 It also fixes the seam phase 4 plugs into: the state machine emits a
 **calculation request** built from the shared contract types (phase 1) and

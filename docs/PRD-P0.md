@@ -117,11 +117,11 @@ The goal is to demonstrate production-quality engineering at small scale: clean 
 
 ### 7.2 Frontend (React + Vite + TypeScript + vanilla CSS)
 
-- **FE-1 — Calculator UI.** Digit pad (0–9, decimal point, sign toggle), buttons for all 7 operations, equals, clear, and a display for input and result.
+- **FE-1 — Calculator UI.** Digit pad (0–9, decimal point), buttons for all 7 operations, equals, clear, and a display for input and result. No `+/-` key: flipping a sign is local arithmetic, which FE-2 forbids (Open Question 5).
   - *Acceptance:* all controls work; every operation is reachable from the UI.
 - **FE-2 — All math through the API.** Pressing equals (or sqrt, which is unary and fires immediately) calls the gateway. The frontend never calculates locally and never calls calc-service.
   - *Acceptance:* with the gateway stopped, no operation returns a result; the UI shows a connection error.
-- **FE-3 — Input validation.** The UI blocks bad input at entry: one decimal point per operand; maximum 15 significant digits; equals does nothing while input is invalid. Detailed editing rules (leading zeros, sign toggle, operator replacement) are decided during implementation (Open Question 5).
+- **FE-3 — Input validation.** The UI blocks bad input at entry: one decimal point per operand; maximum 15 significant digits; equals does nothing while input is invalid. Detailed editing rules (leading zeros, operator replacement) are settled in Open Question 5.
   - *Acceptance:* a second decimal point is ignored; digits stop at the cap; equals is inactive on invalid input.
 - **FE-4 — Error handling.** Each error type shows a clear, non-technical message: domain errors (division by zero, negative sqrt), backend outage ("Calculations are temporarily unavailable — try again"), network failure, unexpected response. Never a blank screen, frozen state, or raw exception. Errors clear on the next valid input.
   - *Acceptance:* each error type shows its own message; the app stays usable after every error.
@@ -252,7 +252,7 @@ POST /calculate        // same body shape; all 7 operations
 2. **(Resolved)** Percentage: "x% of y" (XC-3).
 3. **(Resolved)** Domain errors use 422 (valid shape, impossible math) vs 400 (malformed); 502/504 for downstream failures.
 4. **(Resolved)** Test tooling: Vitest everywhere; React Testing Library on the frontend.
-5. **(Deferred to implementation — non-blocking)** Calculator input state machine: operator pressed mid-entry, digit pressed after a result, operator replacement, recovery after an error, leading zeros, sign toggle. Decided while building FE-1/FE-3; documented by FE-8's tests.
+5. **(Resolved)** Calculator input state machine — operator pressed mid-entry, digit pressed after a result, operator replacement, recovery after an error, leading zeros — settled by the `p3-calculator-ui` spec bundle under `.awc/tasks/` (`spec.md`, "The state machine"), which also drops the `+/-` key permanently, amending FE-1. Documented by FE-8's tests.
 
 ## 11. Phasing
 
