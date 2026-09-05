@@ -1,8 +1,8 @@
 /**
- * The gateway's four settings, each read from one service-prefixed variable so
- * a single shell can start it beside calc-service (`CALC_SERVICE_PORT`) with no
- * collision. The names and defaults are exported so tests and the README read
- * one source. Nothing here touches `process.env`: `resolveConfig` is pure in `env`.
+ * The gateway's settings. Variable names are service-prefixed so one shell can
+ * run it beside calc-service (`CALC_SERVICE_PORT`). Names and defaults are
+ * exported so tests and the README share one source. `resolveConfig` reads
+ * only its `env` argument, never `process.env`.
  */
 
 export const PORT_VARIABLE = "GATEWAY_PORT";

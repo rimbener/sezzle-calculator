@@ -19,13 +19,13 @@ const answering = (status: number, body: unknown) =>
 const client = (fetch: FetchLike, calcServiceUrl = "http://calc:3001") =>
   createCalcClient({ calcServiceUrl, timeoutMs: 3000, fetch });
 
-/** What a refused or reset connection looks like from `fetch`: a rejection, never a `Response`. */
+/** A refused or reset connection: `fetch` rejects, never returns a `Response`. */
 const refused = () => new TypeError("fetch failed");
 
 /** A downstream that accepts the connection and never answers. */
 const hanging = () => vi.fn<FetchLike>(() => new Promise<Response>(() => {}));
 
-/** Like `hanging`, but honouring the signal the way the real fetch does: rejecting with an AbortError on abort. */
+/** Like `hanging`, but rejects with an AbortError on abort, as the real fetch does. */
 const hangingUntilAborted = () =>
   vi.fn<FetchLike>(
     (_url, init) =>

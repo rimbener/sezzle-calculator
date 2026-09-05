@@ -13,9 +13,9 @@ export const ERROR_CODES = {
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
 
 /**
- * Each code's default HTTP status; a new code needs one entry here. `as const`
- * keeps every status a literal type (Hono's `c.json` takes a literal union),
- * `satisfies` keeps the map exhaustive, and no framework type enters this package.
+ * Each code's default HTTP status; a new code needs an entry. `as const` keeps
+ * each status a literal (Hono's `c.json` needs one); `satisfies` keeps the map
+ * exhaustive without a framework type.
  */
 export const STATUS_BY_CODE = {
   VALIDATION_ERROR: 400,
@@ -27,9 +27,8 @@ export const STATUS_BY_CODE = {
 } as const satisfies Record<ErrorCode, number>;
 
 /**
- * The one error envelope, at every status. Parsing a reply with it is how a
- * caller recognises an error: the code must be a known one, and an
- * unrecognised key at either level is dropped rather than rejected.
+ * The one error envelope, at every status. The code must be a known one;
+ * unrecognised keys at either level are dropped, not rejected.
  */
 export const errorResponseSchema = z.object({
   error: z.object({

@@ -2,11 +2,8 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 
-// AC-12, the structural half: the gateway computes nothing. No module under
-// `src/` imports calc-service code or an operation implementation, and none
-// reaches for `Math`. The behavioural half — a fake's implausible number comes
-// back unchanged, and nothing yields a result while the fake fails — is in
-// `app.test.ts`.
+// AC-12, structural half: no module under `src/` imports calc-service code or
+// an operation, or uses `Math`. The behavioural half is in `app.test.ts`.
 const SRC = join(import.meta.dirname, ".");
 const ALLOWED = ["@repo/contracts", "@hono/node-server", "vitest"];
 const ALLOWED_PREFIXES = ["hono", "node:", "vitest/"];

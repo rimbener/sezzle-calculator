@@ -21,9 +21,8 @@ const freePort = () =>
   });
 
 /**
- * No fake anywhere: the real client and the real global `fetch` are in the
- * path, aimed at a port nothing listens on, so a refused connection is what
- * the gateway sees — immediately, and once more after the 100 ms pause.
+ * No fakes: the real client and global `fetch`, aimed at a port nothing
+ * listens on, so the gateway sees a refused connection — twice, 100 ms apart.
  */
 const env = async (port: number) => ({
   GATEWAY_PORT: String(port),

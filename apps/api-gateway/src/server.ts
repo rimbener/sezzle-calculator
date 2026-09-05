@@ -12,9 +12,8 @@ export type RunningServer = {
 };
 
 /**
- * Serves the gateway on the port `env` resolves to. This is the one place the
- * production wiring is assembled: the real client, on the global `fetch`, from
- * the resolved config. Importing binds nothing.
+ * Serves the gateway on the port `env` resolves to. The one place production
+ * wiring is assembled; importing binds nothing.
  */
 export const start = (
   env: Readonly<Record<string, string | undefined>>,

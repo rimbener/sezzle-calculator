@@ -14,7 +14,7 @@ import { Hono, type Context } from "hono";
 import { calculate as domainCalculate } from "./calculate.ts";
 import { CalculationError } from "./calculation-error.ts";
 
-/** Sends the contract's error envelope at the contract's default status for the code. */
+/** Sends the contract's error envelope at the code's default status. */
 const fail = (c: Context, code: ErrorCode, message: string) => {
   const body: ErrorResponse = { error: { code, message } };
   return c.json(body, STATUS_BY_CODE[code]);

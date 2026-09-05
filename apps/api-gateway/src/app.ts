@@ -26,9 +26,8 @@ export type AppDependencies = {
 export const CALCULATE_ROUTE = "/api/v1/calculate";
 
 /**
- * Sends the contract's error envelope, at the contract's default status for the
- * code unless the caller names another — the timeout path's 504 is the one
- * status the code alone does not decide.
+ * Sends the error envelope. The status defaults to the code's; only the
+ * timeout path overrides it (504).
  */
 const fail = (
   c: Context,
@@ -53,15 +52,14 @@ const parseJson = (raw: string): unknown => {
 };
 
 /**
- * `POST /api/v1/calculate`: parse with the contract's schema, call the client,
- * serialise its outcome. The client is injected so tests drive the app through
- * `app.fetch` with no port bound and no downstream running.
+ * `POST /api/v1/calculate`: parse, call the client, serialise. The client is
+ * injected so tests need no port and no downstream.
  */
 export const createApp = ({ calcClient, corsOrigin }: AppDependencies) => {
   const app = new Hono();
 
-  // One browser origin, moved by `CORS_ORIGIN`; any other is granted nothing,
-  // and a request with no Origin header (curl) passes through untouched.
+  // One origin (`CORS_ORIGIN`). Others get no CORS headers; a request with
+  // no Origin header (curl) passes untouched.
   app.use(
     CALCULATE_ROUTE,
     cors({
@@ -71,8 +69,8 @@ export const createApp = ({ calcClient, corsOrigin }: AppDependencies) => {
     }),
   );
 
-  // The client reduces every downstream outcome to a value and never rejects;
-  // should anything still throw, the caller sees the envelope, not the text.
+  // The client never rejects; if anything else throws, the caller still gets
+  // the envelope, not the error text.
   app.onError((_error, c) =>
     fail(c, ERROR_CODES.SERVICE_UNAVAILABLE, SERVICE_UNREACHABLE_MESSAGE),
   );

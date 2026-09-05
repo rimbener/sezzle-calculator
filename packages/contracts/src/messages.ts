@@ -5,7 +5,7 @@ import { OPERAND_COUNT, OPERATIONS, type Operation } from "./operations.ts";
 
 /**
  * One fixed sentence per code; never quotes the request. `VALIDATION_ERROR` and
- * `SERVICE_UNAVAILABLE` each have several sentences, named below instead.
+ * `SERVICE_UNAVAILABLE` have several, named below.
  */
 export const ERROR_MESSAGES: Readonly<
   Record<Exclude<ErrorCode, "VALIDATION_ERROR" | "SERVICE_UNAVAILABLE">, string>

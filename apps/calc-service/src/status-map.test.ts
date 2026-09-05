@@ -2,9 +2,8 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 
-// p2 AC-3: `STATUS_BY_CODE` is the contract's and the only such map in the repo.
-// This service used to declare its own; every workspace's `src/` is scanned so
-// neither it nor a sibling grows one back.
+// p2 AC-3: the contract's `STATUS_BY_CODE` is the only status map in the repo;
+// every workspace's `src/` is scanned so none grows its own.
 const ROOT = join(import.meta.dirname, "..", "..", "..");
 const CONTRACT_MAP = join("packages", "contracts", "src", "errors.ts");
 

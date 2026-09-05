@@ -6,22 +6,22 @@ import {
   type ErrorCode,
 } from "@repo/contracts";
 
-/** The codes calc-service answers 422 with; the only ones a domain error carries. */
+/** The codes calc-service answers 422 with. */
 export type DomainErrorCode = Extract<
   ErrorCode,
   "DIVISION_BY_ZERO" | "NEGATIVE_SQRT" | "RESULT_NOT_FINITE"
 >;
 
 /**
- * Every downstream conversation, reduced to one of three outcomes. The route
- * switches on `kind` and never sees a `Response`, a status or a thrown error.
+ * One downstream call, reduced to three outcomes. The route switches on `kind`
+ * and never sees a `Response`, a status or a thrown error.
  */
 export type CalcOutcome =
   | { kind: "result"; result: number }
   | { kind: "domain-error"; code: DomainErrorCode; message: string }
   | { kind: "unavailable"; reason: "unreachable" | "timeout" };
 
-/** The shape of `fetch` the client needs; the global one fits, and a test passes a fake. */
+/** The slice of `fetch` the client needs; tests pass a fake. */
 export type FetchLike = (url: string, init: RequestInit) => Promise<Response>;
 
 export type CalcClientOptions = {
@@ -54,9 +54,8 @@ const parseJson = (raw: string): unknown => {
 };
 
 /**
- * What a downstream answer means, decided by the contract's schemas and never
- * by trust: a 200 that parses as a result is a result; a 422 that parses as an
- * envelope with a domain code is a domain error; anything else is unreachable.
+ * A 200 that parses as a result is a result; a 422 that parses as an envelope
+ * with a domain code is a domain error; anything else is unreachable.
  */
 const classify = (status: number, body: unknown): CalcOutcome => {
   if (status === 200) {
@@ -74,7 +73,7 @@ const classify = (status: number, body: unknown): CalcOutcome => {
   return { kind: "unavailable", reason: "unreachable" };
 };
 
-/** The pause between a refused connection and the one retry. A constant: nothing in P0 or P1 tunes it. */
+/** Pause before the one retry after a refused connection. Not configurable: no requirement tunes it. */
 const RETRY_PAUSE_MS = 100;
 
 /** Resolves after `ms`, or at once when `signal` aborts first. */
@@ -110,13 +109,13 @@ export const createCalcClient = ({
   const url = calculateUrl(calcServiceUrl);
 
   return async ({ operation, operands }) => {
-    // One deadline covers the whole call, retry included; the signal reaches
-    // the real fetch so a hung socket is released when it fires.
+    // One deadline for the whole call, retry included; the signal also frees
+    // a hung socket.
     const controller = new AbortController();
     const deadline = setTimeout(() => controller.abort(), timeoutMs);
 
-    // Re-serialised from the validated fields, so nothing the caller sent
-    // beyond the contract's two keys reaches the downstream.
+    // Rebuilt from the validated fields so extra caller keys never reach the
+    // downstream.
     const init: RequestInit = {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -132,9 +131,8 @@ export const createCalcClient = ({
       reason: "unreachable",
     };
     const timeout: CalcOutcome = { kind: "unavailable", reason: "timeout" };
-    // A refusal already observed has answered "is it down or slow?", so the
-    // deadline expiring afterwards is still unreachable; timeout is reserved
-    // for a call in which nothing was ever refused.
+    // Once a connection was refused the service is down, not slow: a deadline
+    // expiring after that still reports unreachable.
     let refused = false;
     const expired = (): CalcOutcome => (refused ? unreachable : timeout);
 
@@ -142,12 +140,11 @@ export const createCalcClient = ({
       try {
         return await attempt();
       } catch {
-        // The real fetch rejects when its signal aborts: that is the deadline
-        // speaking, not the network, and it is read as such whichever listener
-        // ran first.
+        // A rejection after abort is the deadline, not the network, whichever
+        // listener ran first.
         if (controller.signal.aborted) return expired();
-        // Any other rejection is a connection-level failure — refused, reset —
-        // and a calc-service restarting between requests deserves one more try.
+        // Any other rejection is a refused or reset connection; retry once for
+        // a calc-service mid-restart.
         refused = true;
         await pause(RETRY_PAUSE_MS, controller.signal);
         if (controller.signal.aborted) return expired();
@@ -156,8 +153,8 @@ export const createCalcClient = ({
     };
 
     try {
-      // Raced, not merely signalled: a fetch that ignores the signal still
-      // cannot hold the call past the deadline.
+      // Raced so a fetch that ignores the signal cannot hold the call past
+      // the deadline.
       return await Promise.race([
         attempts(),
         onAbort(controller.signal).then(expired),
