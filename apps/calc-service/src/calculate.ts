@@ -4,9 +4,8 @@ import { CalculationError } from "./calculation-error.ts";
 import { OPERATION_REGISTRY } from "./operations/registry.ts";
 
 /**
- * Runs a validated request: the operation is reached by looking its name up in the
- * registry, and a result that is `Infinity` or `NaN` fails here, once, as
- * `RESULT_NOT_FINITE`, so no individual operation has to check.
+ * Runs a validated request. A non-finite result fails here as `RESULT_NOT_FINITE`,
+ * so no operation checks on its own.
  */
 export const calculate = ({
   operation,

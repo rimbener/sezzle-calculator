@@ -19,8 +19,7 @@ const operandsSchema = (operation: Operation) =>
   z.array(z.number()).length(OPERAND_COUNT[operation]);
 
 /**
- * One schema for every operation: the enum first, then the operands refined against
- * `OPERAND_COUNT`. The transform runs only once the operation parsed, so a request
+ * The enum parses first and the operands only in the transform, so a request
  * wrong in both ways gets the operation's message.
  */
 export const calculateRequestSchema = z

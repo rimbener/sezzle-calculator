@@ -14,7 +14,7 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { calculate as domainCalculate } from "./calculate.ts";
 import { CalculationError } from "./calculation-error.ts";
 
-/** The one place an error code picks its status: a new code is one entry here. */
+/** Status per error code; a new code needs one entry here. */
 const STATUS_BY_CODE: Readonly<Record<ErrorCode, ContentfulStatusCode>> = {
   VALIDATION_ERROR: 400,
   DIVISION_BY_ZERO: 422,
@@ -23,13 +23,13 @@ const STATUS_BY_CODE: Readonly<Record<ErrorCode, ContentfulStatusCode>> = {
   INTERNAL_ERROR: 500,
 };
 
-/** Every error, at every status, leaves as the contract's envelope and nothing else. */
+/** Sends the contract's error envelope at the code's status. */
 const fail = (c: Context, code: ErrorCode, message: string) => {
   const body: ErrorResponse = { error: { code, message } };
   return c.json(body, STATUS_BY_CODE[code]);
 };
 
-/** The body as JSON, or `undefined` when it is not JSON at all. */
+/** The body parsed, or `undefined` when it is not JSON. */
 const parseJson = (raw: string): unknown => {
   try {
     return JSON.parse(raw);
@@ -43,9 +43,8 @@ export type AppDependencies = {
 };
 
 /**
- * The HTTP surface: `POST /calculate` parses the body with the contract's schema,
- * calls `calculate`, serialises the result. The domain is injectable so a test can
- * induce the unexpected failure that the 500 path exists for.
+ * `POST /calculate`: parse with the contract's schema, call `calculate`, serialise.
+ * `calculate` is injectable so a test can force the 500 path.
  */
 export const createApp = (
   { calculate }: AppDependencies = { calculate: domainCalculate },
@@ -76,5 +75,5 @@ export const createApp = (
   return app;
 };
 
-/** The service's app, exported separately from the server entry so tests drive it through `app.fetch` with no port bound. */
+/** Kept apart from the server entry so tests use `app.fetch` without binding a port. */
 export const app = createApp();

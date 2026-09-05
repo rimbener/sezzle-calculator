@@ -2,10 +2,9 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-// AC-9: the calculation domain is exercisable with no HTTP present. Every module of
-// the domain — sources and tests alike — imports only the contract, vitest, or each
-// other. The domain is named here so the HTTP layer beside it (`app.ts`, `server.ts`,
-// `config.ts` and their tests) is never scanned and never has to be listed.
+// AC-9: the domain runs with no HTTP present. Every domain module, tests included,
+// imports only the contract, vitest or a sibling. Listing the domain keeps the HTTP
+// layer beside it out of the scan.
 const SRC = join(import.meta.dirname, ".");
 const DOMAIN = [
   "operations",
