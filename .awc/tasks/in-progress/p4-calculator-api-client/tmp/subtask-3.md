@@ -2,7 +2,7 @@
 
 - **slice:** 3 — busy state, error presentations and docs
 - **criteria:** AC-11, AC-12, AC-13, AC-14, AC-15
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/calculator/display.ts`, `apps/sezzle-calculator/src/calculator/display.test.ts`, `apps/sezzle-calculator/src/calculator/Calculator.test.tsx`, `apps/sezzle-calculator/src/App.test.tsx`, `apps/sezzle-calculator/README.md`, `apps/sezzle-calculator/src/scope-docs.test.ts`, `AGENTS.md`
 
 `display.ts`'s `pending` case changes its projected `state` from `'idle'` to `'busy'` — the one line `p3-calculator-ui`'s own spec named as deferred here (AC-11). Update `display.test.ts`'s pending cases to expect `'busy'`. `Calculator.test.tsx` has two existing assertions that pending is `'idle'` (the "driven end to end" and "pending is frozen" describe blocks) — both now expect `'busy'`; nothing else in those tests changes, since the reducer's freezing behavior is unchanged (still AC-11's second half: no extra request while pending).

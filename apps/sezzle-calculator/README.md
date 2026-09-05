@@ -1,10 +1,10 @@
 # sezzle-calculator
 
 The calculator web app: a Vite + React single-page app that renders the
-calculator on top of the `@repo/ui` design system. It owns no arithmetic and
-makes no network calls of its own — the operations live in `calc-service`, and
-the gateway that will carry a request there is Phase 4 of
-`docs/spec-phases.md`.
+calculator on top of the `@repo/ui` design system. It owns no arithmetic — the
+operations live in `calc-service` — and reaches them only through the gateway's
+`POST /api/v1/calculate`, carried by the typed client module and hook described
+below (Phase 4 of `docs/spec-phases.md`).
 
 ## Running it
 
@@ -51,8 +51,10 @@ Operation keys record; `=` and `√` are the only keys that emit:
   as `x` then `y`.
 
 An emitted request moves the machine to `pending`: the readout holds the
-calculation (`12 + 5 =`, `sqrt(9) =`) and **every key is ignored, `C`
-included**, so no second request can leave. An outcome ends it:
+calculation (`12 + 5 =`, `sqrt(9) =`), the `Display` switches to its **busy
+state** — the meta line swaps `Ready` for `Working` while the call is in
+flight — and **every key is ignored, `C` included**, so no second request can
+leave. An outcome ends it:
 
 - a **result** puts the number on the readout over the completed calculation;
   a digit or point then starts a fresh entry, an operation key makes the result
@@ -63,16 +65,33 @@ included**, so no second request can leave. An outcome ends it:
 
 Every refusal is silent — the readout does not change and no message appears.
 
-**`=` is a dead end in the running app until Phase 4.** `Calculator` hands each
-request to one optional prop, `onRequest(request): Promise<outcome>`, and
-`App.tsx` passes none yet: nothing answers, so pressing `=` (or `√`) leaves the
-calculator frozen in `pending` until the page is reloaded. Phase 4 of
-`docs/spec-phases.md` supplies the API client and hook behind that prop and
-rewrites nothing below it.
+**`=` reaches the real gateway.** `App.tsx` calls `useCalculate()` — the hook —
+and passes the function it returns to `Calculator`'s `onRequest` prop. The hook
+builds one client from `src/api/client.ts`, which sends each request as one
+`POST <gateway>/api/v1/calculate` and classifies the reply against the shared
+`@repo/contracts` schemas before the state machine sees it. The gateway's base
+URL comes from the `VITE_GATEWAY_URL` env var, defaulting to
+`http://localhost:3000` — the api-gateway's dev port; setting the variable
+retargets the app with no code change. The client never rejects, and it adds no
+arithmetic of its own: it carries the request and reads the answer.
+
+Every reply lands as one of four presentations:
+
+- a **domain error** — a 422 with `DIVISION_BY_ZERO`, `NEGATIVE_SQRT` or
+  `RESULT_NOT_FINITE`, relayed unchanged from the contract's own wording
+  (`cannot divide by zero`, and its two siblings);
+- a **backend outage** — a 502 or 504 behind the gateway, presented as
+  "Calculations are temporarily unavailable — try again.";
+- a **network failure** — `fetch` itself threw and the gateway is unreachable,
+  presented as "Can't reach the calculation service — try again.";
+- an **unexpected response** — anything else: malformed JSON, an unrecognised
+  status, or a body failing the shared schemas, presented as
+  "Something went wrong — try again."
 
 ## How it is built
 
-`src/calculator/` is the whole calculator:
+`src/calculator/` is the whole calculator, and `src/api/` its one connection
+to the gateway:
 
 - `keys.ts` — the key model: every key on the pad, in render order, with its
   glyph, accessible name and kind. Operation keys are named from
@@ -90,6 +109,14 @@ rewrites nothing below it.
 - `Calculator.tsx` — the wiring: `useReducer` over the reducer, one dispatch
   per key press, the projection fed to `Display`, and the `onRequest` effect
   that hands each new request out exactly once and dispatches the outcome.
+- `src/api/client.ts` — the one typed module that talks to the gateway:
+  config resolution (`VITE_GATEWAY_URL`, default `http://localhost:3000`), the
+  `POST`, and the reply classified through `@repo/contracts`' own schemas into
+  the outcome the state machine already understands — a `result`, or one of
+  the four error envelopes. It never rejects.
+- `src/api/useCalculate.ts` — the hook that builds that client once from the
+  resolved gateway URL, for `App` to hand to `Calculator` as `onRequest`. No
+  component calls `fetch` — the client module is the only file that does.
 
 The React Compiler is on (`@rolldown/plugin-babel` + `reactCompilerPreset` in
 `vite.config.ts`), so there is no hand-written `useMemo`/`useCallback`. This

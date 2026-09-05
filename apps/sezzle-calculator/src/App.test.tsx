@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
+import { NETWORK_MESSAGE, OUTAGE_MESSAGE, UNEXPECTED_MESSAGE } from './api/client'
 
 describe('App', () => {
   it('no longer renders the design-system gallery anywhere', () => {
@@ -65,6 +66,156 @@ describe('App — wired to the gateway (AC-9)', () => {
     const init = (fetch.mock.calls[0] as unknown as [string, RequestInit])[1]
     expect(init.method).toBe('POST')
     expect(JSON.parse(init.body as string)).toStrictEqual({ operation: 'sqrt', operands: [9] })
+  })
+})
+
+describe('App — the four error presentations (AC-12)', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it.each([
+    {
+      name: 'a domain error',
+      reply: { status: 422, body: { error: { code: 'DIVISION_BY_ZERO', message: 'cannot divide by zero' } } },
+      keys: ['1', '2', 'Divide', '0', 'Equals'],
+      expression: '12 ÷ 0 =',
+      message: 'cannot divide by zero',
+    },
+    {
+      name: 'a backend outage',
+      reply: { status: 502, body: { error: { code: 'SERVICE_UNAVAILABLE', message: 'calculation service is unreachable' } } },
+      keys: ['1', '2', 'Add', '5', 'Equals'],
+      expression: '12 + 5 =',
+      message: OUTAGE_MESSAGE,
+    },
+    {
+      name: 'a network failure',
+      reply: undefined,
+      keys: ['1', '2', 'Add', '5', 'Equals'],
+      expression: '12 + 5 =',
+      message: NETWORK_MESSAGE,
+    },
+    {
+      name: 'an unexpected response',
+      reply: { status: 400, body: { error: { code: 'VALIDATION_ERROR', message: 'stray 400' } } },
+      keys: ['1', '2', 'Add', '5', 'Equals'],
+      expression: '12 + 5 =',
+      message: UNEXPECTED_MESSAGE,
+    },
+  ] as const)('shows $name\'s message over the failed calculation, in the error state', async ({ reply, keys, expression, message }) => {
+    const fetch = vi.fn(async () =>
+      reply === undefined
+        ? (() => { throw new Error('connection refused') })()
+        : new Response(JSON.stringify(reply.body), {
+            status: reply.status,
+            headers: { 'content-type': 'application/json' },
+          }),
+    )
+    vi.stubGlobal('fetch', fetch)
+
+    render(<App />)
+    const user = userEvent.setup()
+    for (const name of keys) {
+      await user.click(screen.getByRole('button', { name }))
+    }
+
+    await waitFor(() => {
+      const display = screen.getByRole('status')
+      expect(display.querySelector('.sc-display__value')?.textContent).toBe(message)
+      expect(display.querySelector('.sc-display__meta > span:last-child')?.textContent).toBe(expression)
+    })
+    expect(screen.getByRole('status').classList.contains('sc-display--error')).toBe(true)
+  })
+})
+
+describe('App — recovery after an outcome (AC-13)', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  /** The four failure kinds of spec.md's error-contract table, as fetch mocks. */
+  const failures = [
+    { name: 'a domain error', reply: { status: 422, body: { error: { code: 'DIVISION_BY_ZERO', message: 'cannot divide by zero' } } } },
+    { name: 'a backend outage', reply: { status: 502, body: { error: { code: 'SERVICE_UNAVAILABLE', message: 'calculation service is unreachable' } } } },
+    { name: 'a network failure', reply: undefined },
+    { name: 'an unexpected response', reply: { status: 400, body: { error: { code: 'VALIDATION_ERROR', message: 'stray 400' } } } },
+  ] as const
+
+  const stub = (reply: (typeof failures)[number]['reply']) =>
+    vi.fn(async () =>
+      reply === undefined
+        ? (() => { throw new Error('connection refused') })()
+        : new Response(JSON.stringify(reply.body), {
+            status: reply.status,
+            headers: { 'content-type': 'application/json' },
+          }),
+    )
+
+  const press = async (...names: string[]) => {
+    const user = userEvent.setup()
+    for (const name of names) {
+      await user.click(screen.getByRole('button', { name }))
+    }
+  }
+
+  it.each(failures)('a digit after $name clears the error and starts a fresh entry', async ({ reply }) => {
+    vi.stubGlobal('fetch', stub(reply))
+
+    render(<App />)
+    await press('1', '2', 'Add', '5', 'Equals')
+    await waitFor(() => expect(screen.getByRole('status').classList.contains('sc-display--error')).toBe(true))
+
+    await press('7')
+
+    const display = screen.getByRole('status')
+    expect(display.querySelector('.sc-display__value')?.textContent).toBe('7')
+    expect(display.querySelector('.sc-display__meta > span:last-child')?.textContent).toBe('')
+    expect(display.classList.contains('sc-display--error')).toBe(false)
+  })
+
+  it('a decimal point after the error starts a fresh entry too', async () => {
+    vi.stubGlobal('fetch', stub(failures[1].reply))
+
+    render(<App />)
+    await press('1', '2', 'Add', '5', 'Equals')
+    await waitFor(() => expect(screen.getByRole('status').classList.contains('sc-display--error')).toBe(true))
+
+    await press('Decimal point')
+
+    const display = screen.getByRole('status')
+    expect(display.querySelector('.sc-display__value')?.textContent).toBe('0.')
+    expect(display.classList.contains('sc-display--error')).toBe(false)
+  })
+
+  it('C after the error returns the calculator to its starting state', async () => {
+    vi.stubGlobal('fetch', stub(failures[2].reply))
+
+    render(<App />)
+    await press('1', '2', 'Add', '5', 'Equals')
+    await waitFor(() => expect(screen.getByRole('status').classList.contains('sc-display--error')).toBe(true))
+
+    await press('Clear')
+
+    const display = screen.getByRole('status')
+    expect(display.querySelector('.sc-display__value')?.textContent).toBe('0')
+    expect(display.querySelector('.sc-display__meta > span:last-child')?.textContent).toBe('')
+    expect(display.classList.contains('sc-display--error')).toBe(false)
+  })
+
+  it('C after a result returns the calculator to its starting state', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () =>
+      new Response(JSON.stringify({ result: 17 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    ))
+
+    render(<App />)
+    await press('1', '2', 'Add', '5', 'Equals')
+    await waitFor(() => expect(screen.getByRole('status').querySelector('.sc-display__value')?.textContent).toBe('17'))
+
+    await press('Clear')
+
+    const display = screen.getByRole('status')
+    expect(display.querySelector('.sc-display__value')?.textContent).toBe('0')
+    expect(display.querySelector('.sc-display__meta > span:last-child')?.textContent).toBe('')
   })
 })
 

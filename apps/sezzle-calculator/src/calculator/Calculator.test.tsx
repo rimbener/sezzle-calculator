@@ -15,7 +15,10 @@ function readout() {
 }
 
 /** `Display`'s elected state, read off its modifier class. */
-const displayState = () => (screen.getByRole('status').classList.contains('sc-display--error') ? 'error' : 'idle')
+const displayState = () => {
+  const state = screen.getByRole('status').classList
+  return state.contains('sc-display--error') ? 'error' : state.contains('sc-display--busy') ? 'busy' : 'idle'
+}
 
 /** A boundary that never answers: the calculator stays pending, as the app does without `onRequest`. */
 const unanswered = () => vi.fn<(request: CalculateRequest) => Promise<CalculationOutcome>>(() => new Promise(() => {}))
@@ -134,6 +137,7 @@ describe('Calculator — a calculation driven end to end through the UI (AC-25)'
     expect(onRequest).toHaveBeenCalledTimes(1)
     expect(onRequest).toHaveBeenCalledWith({ operation: 'add', operands: [12, 5] })
     expect(readout()).toEqual({ value: '5', expression: '12 + 5 =' })
+    expect(displayState()).toBe('busy')
   })
 })
 
@@ -168,7 +172,7 @@ describe('Calculator — pending is frozen through the UI (AC-18)', () => {
     await press('7', '.', 'Add', 'Square root', 'Equals', 'Clear')
 
     expect(readout()).toEqual({ value: '9', expression: 'sqrt(9) =' })
-    expect(displayState()).toBe('idle')
+    expect(displayState()).toBe('busy')
     expect(onRequest).toHaveBeenCalledTimes(1)
   })
 })

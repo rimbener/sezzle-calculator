@@ -4,7 +4,7 @@ This file provides guidance to Agents like Claude Code (claude.ai/code) when wor
 
 ## What this is
 
-A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`) is a React SPA plus two backend microservices. Today the frontend app, the shared UI package, the shared contract package (`@repo/contracts`), the calculation service (`apps/calc-service`, answering `POST /calculate` on :3001) and the API gateway (`apps/api-gateway`, answering `POST /api/v1/calculate` on :3000) exist; the SPA renders the calculator shell over `@repo/ui` but does not yet call the gateway — it owns no arithmetic and makes no network calls of its own.
+A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`) is a React SPA plus two backend microservices. Today the frontend app, the shared UI package, the shared contract package (`@repo/contracts`), the calculation service (`apps/calc-service`, answering `POST /calculate` on :3001) and the API gateway (`apps/api-gateway`, answering `POST /api/v1/calculate` on :3000) exist; the SPA renders the calculator shell over `@repo/ui` and calls the gateway through its typed API client (`src/api/client.ts`) and hook (`useCalculate`) — it owns no arithmetic, and its only network call is the one the client sends to `POST /api/v1/calculate`.
 
 `docs/` is the source of truth for scope and is worth reading before non-trivial work:
 

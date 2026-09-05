@@ -40,7 +40,7 @@ export function toDisplay(state: CalculatorState): Readout {
         state: 'idle',
       }
     case 'pending':
-      return { value: last(state.calculation.operands), expression: emitted(state.calculation), state: 'idle' }
+      return { value: last(state.calculation.operands), expression: emitted(state.calculation), state: 'busy' }
     case 'result':
       return { value: String(state.value), expression: emitted(state.calculation), state: 'idle' }
     case 'error':

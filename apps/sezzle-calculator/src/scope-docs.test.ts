@@ -63,6 +63,22 @@ describe('AGENTS.md names every workspace with a test suite', () => {
   })
 })
 
+// AC-15's docs half: the SPA calls the gateway now; AGENTS.md's opening paragraph must say so.
+describe('AGENTS.md says the SPA calls the gateway through the client and hook (AC-15)', () => {
+  const agents = readFileSync(resolve(__dirname, '../../../AGENTS.md'), 'utf8')
+
+  it('no longer says the SPA does not yet call the gateway or makes no network calls', () => {
+    expect(agents).not.toMatch(/does not yet call the gateway/)
+    expect(agents).not.toMatch(/makes no network calls of its own/)
+  })
+
+  it('says it calls the gateway, naming the client and the hook', () => {
+    expect(agents).toMatch(/calls the gateway/)
+    expect(agents).toMatch(/client/)
+    expect(agents).toMatch(/hook/)
+  })
+})
+
 // `spec.md` assigns the app README "what the calculator does today": it must describe
 // the calculator, not the Vite template.
 describe('the app README describes what the calculator does today', () => {
@@ -87,12 +103,28 @@ describe('the app README describes what the calculator does today', () => {
     expect(readme).not.toMatch(/not (yet )?wired/i)
   })
 
-  // `=` emits a request nothing answers yet; the README must say so and name the seam.
-  it('says `=` is a dead end until the API client lands, through the onRequest boundary', () => {
+  // `=` reaches the real gateway now; the README must describe the pieces that make it so (AC-14).
+  it('describes the client module and the hook that carry `=` to the gateway', () => {
     expect(readme).toMatch(/`=`/)
-    expect(readme).toMatch(/dead end/i)
-    expect(readme).toMatch(/Phase 4|API client/)
-    expect(readme).toMatch(/onRequest/)
+    expect(readme).toMatch(/src\/api\/client\.ts/)
+    expect(readme).toMatch(/useCalculate/)
+  })
+
+  it('names the gateway URL env var and its dev default', () => {
+    expect(readme).toMatch(/VITE_GATEWAY_URL/)
+    expect(readme).toMatch(/http:\/\/localhost:3000/)
+  })
+
+  it('describes the busy indicator and the four error messages', () => {
+    expect(readme).toMatch(/busy/i)
+    expect(readme).toMatch(/cannot divide by zero/)
+    expect(readme).toMatch(/Calculations are temporarily unavailable/)
+    expect(readme).toMatch(/Can't reach the calculation service/)
+    expect(readme).toMatch(/Something went wrong/)
+  })
+
+  it('no longer describes `=` as a dead end', () => {
+    expect(readme).not.toMatch(/dead end/i)
   })
 })
 

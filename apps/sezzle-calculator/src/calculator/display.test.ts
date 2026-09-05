@@ -25,15 +25,15 @@ describe('display — a recorded operation shows in the expression line (AC-11)'
   })
 })
 
-describe('display — pending holds the emitted calculation still (AC-18)', () => {
+describe('display — pending holds the emitted calculation still, in the busy state (AC-18, AC-11)', () => {
   it.each([
     [{ operation: 'add', operands: ['12', '5'] }, '5', '12 + 5 ='],
     [{ operation: 'sqrt', operands: ['9'] }, '9', 'sqrt(9) ='],
     [{ operation: 'percentage', operands: ['12', '50'] }, '50', '12% of 50 ='],
-  ] as const)('shows %o as the operand that was entered, the calculation with = and the idle state', (calculation, value, expression) => {
+  ] as const)('shows %o as the operand that was entered, the calculation with = and the busy state', (calculation, value, expression) => {
     const request = { operation: calculation.operation, operands: calculation.operands.map(Number) }
 
-    expect(toDisplay({ status: 'pending', calculation, request })).toEqual({ value, expression, state: 'idle' })
+    expect(toDisplay({ status: 'pending', calculation, request })).toEqual({ value, expression, state: 'busy' })
   })
 })
 
