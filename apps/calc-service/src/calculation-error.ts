@@ -3,7 +3,7 @@ import { ERROR_MESSAGES, type ErrorCode } from "@repo/contracts";
 /** Codes the domain raises: valid input whose result cannot be computed. */
 export type CalculationErrorCode = Exclude<
   ErrorCode,
-  "VALIDATION_ERROR" | "INTERNAL_ERROR"
+  "VALIDATION_ERROR" | "INTERNAL_ERROR" | "SERVICE_UNAVAILABLE"
 >;
 
 /** Carries the contract's code and exact message; the HTTP layer maps it to 422 unchanged. */

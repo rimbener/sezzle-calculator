@@ -39,7 +39,11 @@ export const calculateRequestSchema = z
 
 export type CalculateRequest = z.infer<typeof calculateRequestSchema>;
 
-/** The success body of `POST /calculate`. */
-export type CalculateResponse = {
-  result: number;
-};
+/**
+ * The success body of `POST /calculate`. Parsing a reply with it is how a
+ * caller recognises a result: a finite number (`z.number()` rejects `NaN` and
+ * `±Infinity`), any unrecognised key dropped rather than rejected.
+ */
+export const calculateResponseSchema = z.object({ result: z.number() });
+
+export type CalculateResponse = z.infer<typeof calculateResponseSchema>;

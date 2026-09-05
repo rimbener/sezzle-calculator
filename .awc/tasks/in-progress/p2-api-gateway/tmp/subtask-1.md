@@ -2,7 +2,7 @@
 
 - **slice:** 1 — the shared contract
 - **criteria:** AC-1, AC-2, AC-3, AC-4
-- **status:** todo
+- **status:** done
 - **paths:** `packages/contracts/src/errors.ts`, `packages/contracts/src/messages.ts`, `packages/contracts/src/calculate.ts`, `packages/contracts/src/index.ts`, `packages/contracts/src/errors.test.ts`, `packages/contracts/src/calculate.test.ts`, `packages/contracts/src/index.test.ts`, `packages/contracts/README.md`, `apps/calc-service/src/app.ts`, `AGENTS.md`
 - **refactor:** move `STATUS_BY_CODE` out of `apps/calc-service/src/app.ts` into `@repo/contracts` and import it back — preserves: every response calc-service returns today keeps its exact status, code and message
 

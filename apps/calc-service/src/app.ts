@@ -3,27 +3,18 @@ import {
   ERROR_CODES,
   ERROR_MESSAGES,
   INVALID_JSON_MESSAGE,
+  STATUS_BY_CODE,
   type CalculateRequest,
   type CalculateResponse,
   type ErrorCode,
   type ErrorResponse,
 } from "@repo/contracts";
 import { Hono, type Context } from "hono";
-import type { ContentfulStatusCode } from "hono/utils/http-status";
 
 import { calculate as domainCalculate } from "./calculate.ts";
 import { CalculationError } from "./calculation-error.ts";
 
-/** Status per error code; a new code needs one entry here. */
-const STATUS_BY_CODE: Readonly<Record<ErrorCode, ContentfulStatusCode>> = {
-  VALIDATION_ERROR: 400,
-  DIVISION_BY_ZERO: 422,
-  NEGATIVE_SQRT: 422,
-  RESULT_NOT_FINITE: 422,
-  INTERNAL_ERROR: 500,
-};
-
-/** Sends the contract's error envelope at the code's status. */
+/** Sends the contract's error envelope at the contract's default status for the code. */
 const fail = (c: Context, code: ErrorCode, message: string) => {
   const body: ErrorResponse = { error: { code, message } };
   return c.json(body, STATUS_BY_CODE[code]);

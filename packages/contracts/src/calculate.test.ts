@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateRequestSchema } from "./calculate.ts";
+import {
+  calculateRequestSchema,
+  calculateResponseSchema,
+} from "./calculate.ts";
 
 describe("calculateRequestSchema — well-formed requests (AC-1)", () => {
   it.each([
@@ -135,5 +138,40 @@ describe("calculateRequestSchema — operation is validated before operands (AC-
     expect(rejectionMessages({})).toEqual([
       "operation must be one of: add, subtract, multiply, divide, power, sqrt, percentage",
     ]);
+  });
+});
+
+describe("calculateResponseSchema — parsing a downstream reply (p2 AC-2)", () => {
+  it.each([5, 0, -7, 3.5, 1e308])("accepts { result: %d }", (result) => {
+    const parsed = calculateResponseSchema.safeParse({ result });
+
+    expect(parsed.success).toBe(true);
+    expect(parsed.data).toStrictEqual({ result });
+  });
+
+  it("drops an unrecognised key instead of rejecting the body", () => {
+    const parsed = calculateResponseSchema.safeParse({ result: 5, junk: 1 });
+
+    expect(parsed.success).toBe(true);
+    expect(parsed.data).toStrictEqual({ result: 5 });
+  });
+
+  it.each([
+    ["NaN", { result: Number.NaN }],
+    ["Infinity", { result: Number.POSITIVE_INFINITY }],
+    ["-Infinity", { result: Number.NEGATIVE_INFINITY }],
+    ["a missing result", {}],
+    ["a string result", { result: "5" }],
+    ["a null result", { result: null }],
+    ["a null body", null],
+    ["a number body", 5],
+    ["a string body", "5"],
+    ["an array body", [5]],
+    [
+      "an error envelope",
+      { error: { code: "DIVISION_BY_ZERO", message: "x" } },
+    ],
+  ])("rejects %s", (_label, body) => {
+    expect(calculateResponseSchema.safeParse(body).success).toBe(false);
   });
 });
