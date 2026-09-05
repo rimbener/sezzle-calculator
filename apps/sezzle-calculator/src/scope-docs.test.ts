@@ -99,3 +99,20 @@ describe('the app README describes what the calculator does today', () => {
     expect(readme).toMatch(/onRequest/)
   })
 })
+
+// review F-1: every pin above reads a file outside this workspace, which Turbo's
+// default hash does not cover — the cached green would replay over a docs edit.
+// The workspace turbo.json names those files as inputs of the `test` task.
+describe('the test task hashes the docs it pins', () => {
+  const turbo = JSON.parse(readFileSync(resolve(__dirname, '../turbo.json'), 'utf8'))
+
+  it('extends the root config and keeps the default inputs', () => {
+    expect(turbo.extends).toEqual(['//'])
+    expect(turbo.tasks.test.inputs).toContain('$TURBO_DEFAULT$')
+  })
+
+  it('lists docs/*.md and AGENTS.md at the repo root as inputs', () => {
+    expect(turbo.tasks.test.inputs).toContain('$TURBO_ROOT$/docs/*.md')
+    expect(turbo.tasks.test.inputs).toContain('$TURBO_ROOT$/AGENTS.md')
+  })
+})
