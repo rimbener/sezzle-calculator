@@ -2,7 +2,7 @@
 
 - **slice:** 2 — the hook and the wired app
 - **criteria:** AC-8, AC-9, AC-10
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/api/useCalculate.ts`, `apps/sezzle-calculator/src/App.tsx`, `apps/sezzle-calculator/src/App.test.tsx`
 
 `useCalculate.ts` is the whole hook FE-7 asks for: it builds one client from `client.ts`'s factory and the resolved gateway URL, and returns the function — nothing else. The React Compiler covers memoizing that construction (`CLAUDE.md`: no hand-written `useMemo`/`useCallback`).
