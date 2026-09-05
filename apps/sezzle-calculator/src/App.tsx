@@ -1,11 +1,8 @@
 import './App.css'
+import { DesignSystem } from '@repo/ui/design-system'
 
 function App() {
-  return (
-    <h1>
-      Sezzle Calculator
-    </h1>
-  )
+  return <DesignSystem />
 }
 
 export default App

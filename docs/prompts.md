@@ -152,3 +152,16 @@ Trade-off worth knowing: without tokens/, output won't use var(--…) — it'll 
 **Result:** Now SKILL.md + BRAND.md + styles.css + tokens/ — ten files, still no components or UI kit.
 
 BRAND.md now names the token for every value instead of just printing hex: --key-operator rather than #F0A93B, font: var(--type-key) rather than a hand-assembled font stack. SKILL.md tells Claude to link styles.css and never write a raw hex — so output stays token-driven and drops straight into the real repo.
+## 14. Design system gallery component
+
+### 14.1 — Build the gallery
+
+> add one component named design-system.tsx that has one example of each possible component in @packages/ui . be sure to add all the iterations
+
+**Result:** `apps/sezzle-calculator/src/design-system.tsx` — a single `DesignSystem` component rendering every `@repo/ui` export in every variant: Button (5 variants × 3 sizes, disabled, block), Card (paper/sunken with eyebrow/title/footer, body-only), Badge (5 tones), Key (5 faces, sublabel, active, disabled, plus a 4-column keypad using `span`), Display (idle/busy/error, sm/md/lg, defaults), Callout (4 tones with `code`, title-only, dismissible), BusyLamp (idle/busy/up/down, labelled and bare), Input (plain, hint, suffix, invalid, disabled, read-only, no label), Toggle (interactive, static, disabled on/off, label-less). Layout in a companion `design-system.css` using tokens only — no raw hex, no raw px, no inline styles. `App.tsx` mounted it.
+
+### 14.2 — Move it into the package
+
+> ok, but move the files into @../../packages/ui/ and just import it on @src/App.tsx
+
+**Result:** Gallery moved to `packages/ui/src/design-system.tsx` (restyled to the package's own conventions: semicolons, double quotes, relative sibling imports) and `packages/ui/src/styles/design-system.css`, which `styles/styles.css` now `@import`s — keeping the CSS out of the `.tsx` so `tsc --noEmit` still resolves. Exported from the barrel, so both `@repo/ui` and `@repo/ui/design-system` resolve it. `App.tsx` reduced to importing and rendering `<DesignSystem />`.
