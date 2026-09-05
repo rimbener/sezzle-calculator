@@ -371,3 +371,9 @@ Session started through awc (agentic-workflow-creator), which loaded the `workfl
 > change prd-to-spec complete with .awc/tasks/spec-ready/<task>/. fix lint. Ill update node
 
 **Result:** `workflows/prd-to-spec/agents/workflow_lead.md`'s `complete ->` line now names `.awc/tasks/spec-ready/<task>/`; `apps/sezzle-calculator/package.json` lint became `eslint . --max-warnings 0`, verified green with an uncached Turbo run.
+
+## 20. Split the frontend spec phase in two
+
+> split phase 3 into 2 different phases: one that is only UI+Input state machine, and one that connects with the API
+
+**Result:** Rewrote `docs/spec-phases.md` as five `prd-to-spec` runs instead of four — phase 3 (`p3-calculator-ui`: FE-1, FE-3, Open Question 5, UI half of FE-8, no `fetch`) now emits a calculation request and consumes an outcome, phase 4 (`p4-calculator-api-client`: FE-2, FE-4, FE-5, FE-7, network half of FE-8) adds the typed client, hook, busy state and the four error presentations, and the old phase 4 became phase 5 (`p5-quality-and-docs`). Updated the order table's dependency column, added a rationale bullet for the network-boundary split, and left `docs/PRD-P0.md` §11 unchanged with a note in the intro.
