@@ -32,6 +32,26 @@ describe('scope docs agree with the pad (AC-2)', () => {
   })
 })
 
+// AC-8's docs half: the operand cap the machine enforces counts 15 characters, the
+// decimal point included — not "significant digits" — and the scope docs must say so.
+describe('scope docs state the operand cap as the machine enforces it (AC-8)', () => {
+  const prd = docs('PRD-P0.md')
+  const phases = docs('spec-phases.md')
+
+  it('PRD-P0 FE-3 caps an operand at 15 characters, the decimal point included', () => {
+    const fe3 = line(prd, '**FE-3')
+    expect(fe3).not.toMatch(/significant digits/i)
+    expect(fe3).toMatch(/15 characters/)
+    expect(fe3).toMatch(/decimal point included/i)
+  })
+
+  it('spec-phases describes the Phase 3 cap in characters, not significant digits', () => {
+    const phase3 = phases.split('## Phase 3')[1]?.split('\n## ')[0] ?? ''
+    expect(phase3).not.toMatch(/significant.digit/i)
+    expect(phase3).toMatch(/15-character cap/)
+  })
+})
+
 // review-slice-1 F-1: `AGENTS.md` describes the test suites; once the frontend and
 // `@repo/ui` grow suites of their own the sentence must name them, not deny them.
 describe('AGENTS.md names every workspace with a test suite', () => {
@@ -43,5 +63,30 @@ describe('AGENTS.md names every workspace with a test suite', () => {
     expect(tests).toMatch(/apps\/sezzle-calculator\/src\/\*\*\/\*\.test\.tsx?/)
     expect(tests).toMatch(/packages\/ui\/src\/\*\.test\.tsx/)
     expect(tests).toMatch(/afterEach\(cleanup\)/)
+  })
+})
+
+// review-slice-2 F-1: `spec.md` assigns `apps/sezzle-calculator/README.md` "what the
+// calculator does today". Once the calculator types, the README must say so — and
+// stop being the Vite template.
+describe('the app README describes what the calculator does today', () => {
+  const readme = readFileSync(resolve(__dirname, '../README.md'), 'utf8')
+
+  it('is no longer the Vite template', () => {
+    expect(readme).not.toMatch(/^# React \+ TypeScript \+ Vite/)
+    expect(readme).not.toMatch(/This template provides a minimal setup/)
+  })
+
+  it('states the entry rules the reducer enforces', () => {
+    expect(readme).toMatch(/leading zero/i)
+    expect(readme).toMatch(/one decimal point/i)
+    expect(readme).toMatch(/15 characters/)
+    expect(readme).toMatch(/`C`/)
+  })
+
+  it('says the operation, square-root and equals keys are not wired yet', () => {
+    expect(readme).toMatch(/`=`/)
+    expect(readme).toMatch(/sqrt|square root/i)
+    expect(readme).toMatch(/not (yet )?wired|inert|do(es)? nothing/i)
   })
 })

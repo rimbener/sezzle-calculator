@@ -119,7 +119,7 @@ defaults; Vitest tests with the downstream mocked.
 
 **In scope:** digit pad, decimal point, all seven operation keys,
 equals and clear, and the display; entry-level validation (one decimal point,
-15-significant-digit cap, equals inert while input is invalid); and the input
+15-character cap with the decimal point counted, equals inert while input is invalid); and the input
 state machine itself. This is the run that settles **Open Question 5** —
 operator pressed mid-entry, digit after a result, operator replacement, error
 recovery, leading zeros — and drops the `+/-` key permanently, since flipping

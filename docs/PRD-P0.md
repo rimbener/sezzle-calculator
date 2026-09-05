@@ -121,7 +121,7 @@ The goal is to demonstrate production-quality engineering at small scale: clean 
   - *Acceptance:* all controls work; every operation is reachable from the UI.
 - **FE-2 — All math through the API.** Pressing equals (or sqrt, which is unary and fires immediately) calls the gateway. The frontend never calculates locally and never calls calc-service.
   - *Acceptance:* with the gateway stopped, no operation returns a result; the UI shows a connection error.
-- **FE-3 — Input validation.** The UI blocks bad input at entry: one decimal point per operand; maximum 15 significant digits; equals does nothing while input is invalid. Detailed editing rules (leading zeros, operator replacement) are settled in Open Question 5.
+- **FE-3 — Input validation.** The UI blocks bad input at entry: one decimal point per operand; an operand capped at 15 characters, the decimal point included; equals does nothing while input is invalid. Detailed editing rules (leading zeros, operator replacement) are settled in Open Question 5.
   - *Acceptance:* a second decimal point is ignored; digits stop at the cap; equals is inactive on invalid input.
 - **FE-4 — Error handling.** Each error type shows a clear, non-technical message: domain errors (division by zero, negative sqrt), backend outage ("Calculations are temporarily unavailable — try again"), network failure, unexpected response. Never a blank screen, frozen state, or raw exception. Errors clear on the next valid input.
   - *Acceptance:* each error type shows its own message; the app stays usable after every error.
