@@ -1,0 +1,101 @@
+name: spec-to-code
+description: One approved spec bundle → tested, reviewed, committed code on the task branch, built slice by slice with TDD and closed by a Definition-of-Done check
+
+inputs:
+  - name: task      # id of letters, digits, hyphens, underscores — the same id the prd-to-spec run used; names .awc/tasks/spec-ready/<task>/ on entry, .awc/tasks/in-progress/<task>/ during the run, .awc/tasks/done/<task>/ at the end, and the branch task/<task>
+
+vars:
+  commands: "npx turbo run lint check-types test --output-logs=errors-only"   # the full gate: lint, typecheck and unit tests across every workspace; silent when green
+  test_command: "npx turbo run test --output-logs=errors-only"                # the unit suite alone
+  base: main                                                                  # the ref the worktree was cut from; slice 1, the full review and the DoD diff against it
+
+nodes:
+  # Opens the trail: moves the approved bundle prd-to-spec left under
+  # spec-ready/ into in-progress/, where every agent reads and writes it.
+  - id: open-task
+    run: workflows/spec-to-code/scripts/open-task.sh {{task}}
+
+  # A fresh worktree has no node_modules.
+  - id: install
+    run: npm ci --silent
+
+  # One iteration per vertical slice: build it by TDD, review its diff, fix
+  # every finding and commit. The fix step's DONE token, emitted once
+  # subtasks.md shows every slice done, ends the loop.
+  - id: build
+    loop:
+      steps:
+        - agent: agents/implementer_tdd.md
+          prompt: "Task: {{task}}. Mode: build-slice. Slice: {{iteration}}. Commands: {{commands}}."
+          expect: green
+        - agent: agents/reviewer_slice.md
+          prompt: "Task: {{task}}. Mode: review-slice. Slice: {{iteration}}. Commands: {{test_command}}. Base: {{base}}. Verdict-writer: workflows/spec-to-code/scripts/write-verdict-file.sh."
+          expect: [APPROVED, CHANGES_REQUESTED]
+          allowed_tools: [read, search, edit, web, shell]
+        - agent: agents/implementer_tdd.md
+          prompt: "Task: {{task}}. Mode: fix-slice-findings. Slice: {{iteration}}. Commands: {{commands}}."
+          expect: green
+      until: DONE
+      max_iterations: 8
+
+  # The exhaustive review over the whole task's diff. The gate runs before
+  # it, so the reviewer reads a verified tree, and after the fix step, so a
+  # round never ends on an unverified one.
+  - id: review
+    loop:
+      steps:
+        - run: "{{commands}}"
+        - agent: agents/reviewer_engineering.md
+          prompt: "Task: {{task}}. Mode: full-review. Base: {{base}}. Verdict-writer: workflows/spec-to-code/scripts/write-verdict-file.sh."
+          expect: [APPROVED, CHANGES_REQUESTED]
+          allowed_tools: [read, search, edit, web, shell]
+        - agent: agents/implementer_tdd.md
+          prompt: "Task: {{task}}. Mode: fix-review-findings. Commands: {{commands}}."
+          expect: green
+        - run: "{{commands}}"
+      until: DONE
+      max_iterations: 2
+
+  # Trims the comments this run added, code byte-for-byte unchanged, and
+  # commits the rewrite. The last step that edits code.
+  - id: shrink-comments
+    agent: agents/text_shrinker.md
+    prompt: "Task: {{task}}. Mode: shrink-comments. Base: {{base}}. Commands: {{commands}}."
+    expect: trimmed
+    allowed_tools: [read, search, edit, web, shell]
+
+  - id: shrink-gate
+    run: "{{commands}}"
+
+  # The Definition of Done, re-verified against committed history; gaps are
+  # closed by TDD and committed. The fix step's DONE token ends the loop.
+  - id: dod
+    loop:
+      steps:
+        - agent: agents/dod_validator.md
+          prompt: "Task: {{task}}. Mode: validate. Commands: {{commands}}. Base: {{base}}."
+          expect: [PASS, DOD_FAILED]
+          allowed_tools: [read, search, edit, web, shell]
+        - agent: agents/implementer_tdd.md
+          prompt: "Task: {{task}}. Mode: close-dod-gaps. Commands: {{commands}}."
+          expect: green
+      until: DONE
+      max_iterations: 2
+
+  # The review, shrink and DoD reports have no owning commit; this lands them.
+  - id: commit-trail
+    agent: agents/committer.md
+    prompt: "Task: {{task}}. Mode: commit. Paths: .awc/tasks/in-progress/{{task}}. Message: chore(spec-to-code): {{task}} task trail"
+    expect: [committed, unchanged]
+    allowed_tools: [read, search, shell, web]
+
+  # Archives the trail to .awc/tasks/done/<task>/. Last node that touches it.
+  - id: finish
+    run: workflows/spec-to-code/scripts/finish-task.sh {{task}}
+
+  # Records the archive move. The branch is then ready for a pull request.
+  - id: commit-archive
+    agent: agents/committer.md
+    prompt: "Task: {{task}}. Mode: commit. Paths: .awc/tasks/in-progress/{{task}} .awc/tasks/done/{{task}}. Message: chore(spec-to-code): archive {{task}} task trail"
+    expect: [committed, unchanged]
+    allowed_tools: [read, search, shell, web]
