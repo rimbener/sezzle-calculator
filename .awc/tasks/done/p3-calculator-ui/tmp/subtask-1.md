@@ -2,7 +2,7 @@
 
 - **slice:** 1 — the calculator shell
 - **criteria:** AC-1
-- **status:** todo
+- **status:** done
 - **paths:** `packages/ui/src/keypad.tsx`, `packages/ui/src/index.ts`, `packages/ui/src/styles/components.css`, `packages/ui/src/design-system.tsx`, `packages/ui/src/keypad.test.tsx`, `CLAUDE.md`
 
 A grid container and nothing more. `Keypad` renders its children into a CSS grid, forwards the rest of its DOM props, and composes class names with `clsx` like every other component in the package. It knows no operation names and imports nothing from `@repo/contracts`; `Key`'s existing `span` prop already handles a wide `0` or `=`.

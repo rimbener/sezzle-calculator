@@ -1,8 +1,8 @@
 import './App.css'
-import { DesignSystem } from '@repo/ui/design-system'
+import { Calculator } from './calculator/Calculator'
 
 function App() {
-  return <DesignSystem />
+  return <Calculator />
 }
 
 export default App

@@ -2,7 +2,7 @@
 
 - **slice:** 1 — the calculator shell
 - **criteria:** AC-2, AC-3
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/App.tsx`, `apps/sezzle-calculator/src/App.css`, `apps/sezzle-calculator/src/calculator/Calculator.tsx`, `apps/sezzle-calculator/src/calculator/keys.ts`, `apps/sezzle-calculator/src/calculator/Calculator.test.tsx`, `apps/sezzle-calculator/package.json`, `package-lock.json`, `docs/PRD-P0.md`, `docs/spec-phases.md`
 
 `App.tsx` stops rendering `<DesignSystem />` and renders `<Calculator />` instead. The gallery component stays exported from `@repo/ui`; only the app drops it. AC-2 records the change — there is no behaviour-preserving refactor here.

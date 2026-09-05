@@ -2,7 +2,7 @@
 
 - **slice:** 2 — entry
 - **criteria:** AC-4, AC-5, AC-6, AC-7, AC-8
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/calculator/state.ts`, `apps/sezzle-calculator/src/calculator/reducer.ts`, `apps/sezzle-calculator/src/calculator/reducer.test.ts`
 
 The pure state machine begins here, with only the keys that build an operand. `state.ts` holds the state type and the initial state — the four statuses of `spec.md`'s state-machine section, though only `entering` is reachable in this subtask — and `reducer.ts` is a pure function from state and action to state, importing no React and nothing that performs I/O.

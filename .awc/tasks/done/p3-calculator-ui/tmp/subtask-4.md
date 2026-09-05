@@ -2,7 +2,7 @@
 
 - **slice:** 2 — entry
 - **criteria:** AC-9, AC-10
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/calculator/Calculator.tsx`, `apps/sezzle-calculator/src/calculator/display.ts`, `apps/sezzle-calculator/src/calculator/reducer.ts`, `apps/sezzle-calculator/src/calculator/reducer.test.ts`, `apps/sezzle-calculator/src/calculator/Calculator.test.tsx`
 
 `Calculator` stops hard-wiring the display and drives the reducer with `useReducer`, dispatching one action per key press from the `keys.ts` model. `display.ts` is the projection: a pure function from state to the three `Display` slots — `value`, `expression`, `state` — so what the user sees is testable without rendering and the component stays a wiring layer.

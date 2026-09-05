@@ -15,5 +15,7 @@ export { Input } from "./input";
 export type { InputProps } from "./input";
 export { Key } from "./key";
 export type { KeyFace, KeyProps } from "./key";
+export { Keypad } from "./keypad";
+export type { KeypadProps } from "./keypad";
 export { Toggle } from "./toggle";
 export type { ToggleProps } from "./toggle";

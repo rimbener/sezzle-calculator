@@ -2,7 +2,7 @@
 
 - **slice:** 3 — operations, requests and outcomes
 - **criteria:** AC-24, AC-25
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/calculator/Calculator.tsx`, `apps/sezzle-calculator/src/calculator/Calculator.test.tsx`, `apps/sezzle-calculator/README.md`
 
 `Calculator` wires the operation keys, `=` and `sqrt` to the reducer and projects the result, error and pending states onto `Display` — pending as the frozen readout of `spec.md`'s display contract, with `Display` still `idle`.
