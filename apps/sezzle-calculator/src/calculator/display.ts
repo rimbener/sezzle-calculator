@@ -15,7 +15,7 @@ type Render = (operands: readonly string[]) => string
 /** `12 + 5`, or `12 +` while the right operand is still to come. */
 const infix = (glyph: string): Render => ([left, right]) => [`${left} ${glyph}`, right].filter(Boolean).join(' ')
 
-/** The expression-line shape of each operation (`spec.md`, "Display contract"): percentage reads as "x% of y", never as a modulo. */
+/** How each operation reads on the expression line; percentage is "x% of y", never a modulo. */
 const RENDER: Readonly<Record<Operation, Render>> = {
   add: infix('+'),
   subtract: infix('−'),
@@ -29,7 +29,7 @@ const RENDER: Readonly<Record<Operation, Render>> = {
 /** An emitted calculation on the expression line: `12 + 5 =`, `sqrt(9) =`. */
 const emitted = ({ operation, operands }: Calculation) => `${RENDER[operation](operands)} =`
 
-/** The pure projection from machine state to `Display`'s three slots (`spec.md`, "Display contract"). */
+/** Projects machine state onto `Display`'s three slots. */
 export function toDisplay(state: CalculatorState): Readout {
   switch (state.status) {
     case 'entering':

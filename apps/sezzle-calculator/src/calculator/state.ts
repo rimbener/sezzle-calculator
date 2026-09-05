@@ -9,7 +9,7 @@ export interface Calculation {
   operands: readonly string[]
 }
 
-/** The user is building an operand: the operands typed so far, the last one live on the readout, plus the operation once one is recorded. */
+/** The user is building an operand; the last one is live on the readout. */
 export interface Entering {
   status: 'entering'
   /** The operands as typed, in entry order — text, never numbers. Never empty: the readout starts at `0`. */
@@ -42,7 +42,7 @@ export interface Failed {
 
 export type CalculatorState = Entering | Pending | Result | Failed
 
-/** What answers a request: the contract's success body or its error envelope. Phase 4's client resolves with one of these and never rejects. */
+/** What answers a request: the contract's success body or its error envelope. Phase 4's client never rejects. */
 export type CalculationOutcome = CalculateResponse | ErrorResponse
 
 export const INITIAL_STATE: Entering = {

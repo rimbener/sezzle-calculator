@@ -8,9 +8,8 @@ import { type CalculationOutcome, INITIAL_STATE } from './state'
 
 export interface CalculatorProps {
   /**
-   * The boundary Phase 4 plugs into (`spec.md`, approach): answers one emitted request with an outcome — the
-   * contract's `{ result }` or `{ error: { code, message } }` — and never rejects. Omitted, `=` leaves the
-   * calculator pending: the running app's dead end until the API client lands.
+   * The seam Phase 4's API client plugs into: answers one request with the contract's `{ result }` or
+   * `{ error }` body and never rejects. Omitted, `=` leaves the calculator pending.
    */
   onRequest?: (request: CalculateRequest) => Promise<CalculationOutcome>
 }

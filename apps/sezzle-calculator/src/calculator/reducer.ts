@@ -40,11 +40,11 @@ const digitKey = (digit: string): Edit => operand =>
 const pointKey: Edit = operand =>
   operand.includes('.') || full(operand) ? undefined : operand + '.'
 
-/** True once an operation is recorded and its next operand has not been started: the next digit or point opens it. */
+/** An operation is recorded and its next operand not yet started; the next digit or point opens it. */
 const awaitingOperand = (state: Entering) =>
   state.operation !== undefined && state.operands.length < OPERAND_COUNT[state.operation]
 
-/** An entry is complete once an operation is recorded and every operand it takes has had a key appended (AC-14). */
+/** An operation is recorded and every operand it takes has had a key appended (AC-14). */
 const complete = (state: Entering): state is Entering & { operation: Operation } =>
   state.operation !== undefined && state.operands.length === OPERAND_COUNT[state.operation]
 
@@ -60,7 +60,7 @@ function build(state: Entering, edit: Edit): CalculatorState {
 /** The entered text read as the contract's number: `5.` reads as `5`. Parsing, not arithmetic. */
 const toNumber = (operand: string) => Number(operand)
 
-/** Emits the calculation: the request Phase 4 will answer, and the readout held still meanwhile. */
+/** Emits the request Phase 4 will answer; the readout holds still meanwhile. */
 const emit = (calculation: Calculation): CalculatorState => ({
   status: 'pending',
   calculation,
@@ -113,7 +113,7 @@ function settled(state: Result | Failed, action: Action): CalculatorState {
   }
 }
 
-/** Pure: state and action in, state out. Imports no React and performs no I/O. */
+/** Pure: imports no React, performs no I/O. */
 export function reducer(state: CalculatorState, action: Action): CalculatorState {
   switch (state.status) {
     case 'entering':

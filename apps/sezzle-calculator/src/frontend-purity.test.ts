@@ -2,9 +2,9 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-// AC-24: the frontend computes nothing and calls nothing. No source file under the app
-// or `@repo/ui` reaches for `fetch`, `Math` or number parsing beyond the one place the
-// entered text becomes the contract's number — the request the reducer emits.
+// AC-24: the frontend computes nothing and calls nothing. No source under the app or
+// `@repo/ui` uses `fetch`, `Math` or number parsing, except the reducer turning entered
+// text into the request's numbers.
 const ROOTS = [join(__dirname, '.'), join(__dirname, '../../../packages/ui/src')]
 const FORBIDDEN = [/\bfetch\s*\(/, /\bXMLHttpRequest\b/, /\bWebSocket\b/, /\bMath\./, /\beval\s*\(/, /\bparseFloat\s*\(/, /\bparseInt\s*\(/]
 const REQUEST_BUILDER = join(__dirname, 'calculator/reducer.ts')

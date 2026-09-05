@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { Calculator } from './Calculator'
 import type { CalculationOutcome } from './state'
 
-/** The three readout slots as the user sees them: `Display` puts value and expression in fixed places. */
+/** The value and expression slots, read where `Display` puts them. */
 function readout() {
   const display = screen.getByRole('status')
   return {
@@ -17,10 +17,10 @@ function readout() {
 /** `Display`'s elected state, read off its modifier class. */
 const displayState = () => (screen.getByRole('status').classList.contains('sc-display--error') ? 'error' : 'idle')
 
-/** A request boundary that never answers: the calculator stays pending, as the dev app does without `onRequest`. */
+/** A boundary that never answers: the calculator stays pending, as the app does without `onRequest`. */
 const unanswered = () => vi.fn<(request: CalculateRequest) => Promise<CalculationOutcome>>(() => new Promise(() => {}))
 
-/** Clicks keys by accessible name, in order — digits and the point by their labels. */
+/** Clicks keys by accessible name, in order; `.` is the decimal point. */
 async function press(...names: string[]) {
   const user = userEvent.setup()
   for (const name of names) {

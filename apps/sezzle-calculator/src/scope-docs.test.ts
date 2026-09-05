@@ -2,8 +2,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-// AC-2's docs half: `docs/` is the source of truth for scope, and the pad ships
-// with no sign-toggle key, so the scope docs must say the same.
+// AC-2's docs half: the pad ships with no sign-toggle key, so the scope docs must say the same.
 const docs = (name: string) => readFileSync(resolve(__dirname, '../../../docs', name), 'utf8')
 const line = (text: string, marker: string) => text.split('\n').find(l => l.includes(marker)) ?? ''
 
@@ -32,8 +31,7 @@ describe('scope docs agree with the pad (AC-2)', () => {
   })
 })
 
-// AC-8's docs half: the operand cap the machine enforces counts 15 characters, the
-// decimal point included — not "significant digits" — and the scope docs must say so.
+// AC-8's docs half: the cap is 15 characters, point included — not "significant digits".
 describe('scope docs state the operand cap as the machine enforces it (AC-8)', () => {
   const prd = docs('PRD-P0.md')
   const phases = docs('spec-phases.md')
@@ -52,8 +50,7 @@ describe('scope docs state the operand cap as the machine enforces it (AC-8)', (
   })
 })
 
-// review-slice-1 F-1: `AGENTS.md` describes the test suites; once the frontend and
-// `@repo/ui` grow suites of their own the sentence must name them, not deny them.
+// `AGENTS.md` describes the test suites; it must name the frontend and `@repo/ui` suites, not deny them.
 describe('AGENTS.md names every workspace with a test suite', () => {
   const tests = line(readFileSync(resolve(__dirname, '../../../AGENTS.md'), 'utf8'), 'Tests: Vitest')
 
@@ -66,9 +63,8 @@ describe('AGENTS.md names every workspace with a test suite', () => {
   })
 })
 
-// review-slice-2 F-1: `spec.md` assigns `apps/sezzle-calculator/README.md` "what the
-// calculator does today". Once the calculator types, the README must say so — and
-// stop being the Vite template.
+// `spec.md` assigns the app README "what the calculator does today": it must describe
+// the calculator, not the Vite template.
 describe('the app README describes what the calculator does today', () => {
   const readme = readFileSync(resolve(__dirname, '../README.md'), 'utf8')
 
@@ -91,7 +87,7 @@ describe('the app README describes what the calculator does today', () => {
     expect(readme).not.toMatch(/not (yet )?wired/i)
   })
 
-  // Slice 3: `=` emits a request nothing answers yet — the README must say so, and name the seam.
+  // `=` emits a request nothing answers yet; the README must say so and name the seam.
   it('says `=` is a dead end until the API client lands, through the onRequest boundary', () => {
     expect(readme).toMatch(/`=`/)
     expect(readme).toMatch(/dead end/i)
@@ -100,9 +96,8 @@ describe('the app README describes what the calculator does today', () => {
   })
 })
 
-// review F-1: every pin above reads a file outside this workspace, which Turbo's
-// default hash does not cover — the cached green would replay over a docs edit.
-// The workspace turbo.json names those files as inputs of the `test` task.
+// Every pin above reads a file outside this workspace, which Turbo's default hash skips,
+// so a cached pass would replay over a docs edit. turbo.json lists them as `test` inputs.
 describe('the test task hashes the docs it pins', () => {
   const turbo = JSON.parse(readFileSync(resolve(__dirname, '../turbo.json'), 'utf8'))
 
