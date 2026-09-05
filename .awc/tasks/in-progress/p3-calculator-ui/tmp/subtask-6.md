@@ -2,7 +2,7 @@
 
 - **slice:** 3 — operations, requests and outcomes
 - **criteria:** AC-17, AC-18, AC-19, AC-20, AC-21, AC-22, AC-23
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/calculator/state.ts`, `apps/sezzle-calculator/src/calculator/reducer.ts`, `apps/sezzle-calculator/src/calculator/display.ts`, `apps/sezzle-calculator/src/calculator/reducer.test.ts`, `apps/sezzle-calculator/src/calculator/display.test.ts`
 
 The seam Phase 4 plugs into. `=` on a complete entry, and `sqrt` with no operation recorded, move the state to `pending` and put a **calculation request** on it — the operation name and its operands in entry order, typed by `@repo/contracts` and valid against its request schema. The reducer never calls anything; the request is a value on the state, which `Calculator` hands to its `onRequest` boundary in subtask-7 (`spec.md`, approach). Each operand is the entered string read as a finite number, a trailing bare decimal point dropped (`5.` is `5`), and an entry counts as complete once any key has appended to the second operand. Percentage sends `x` then `y` (XC-3).

@@ -2,7 +2,7 @@
 
 - **slice:** 3 — operations, requests and outcomes
 - **criteria:** AC-11, AC-12, AC-13, AC-14, AC-15, AC-16
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/calculator/state.ts`, `apps/sezzle-calculator/src/calculator/reducer.ts`, `apps/sezzle-calculator/src/calculator/display.ts`, `apps/sezzle-calculator/src/calculator/reducer.test.ts`, `apps/sezzle-calculator/src/calculator/display.test.ts`
 
 The operation half of the machine, still emitting nothing — this subtask decides only what is recorded and what is refused.

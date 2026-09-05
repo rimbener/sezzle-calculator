@@ -84,9 +84,18 @@ describe('the app README describes what the calculator does today', () => {
     expect(readme).toMatch(/`C`/)
   })
 
-  it('says the operation, square-root and equals keys are not wired yet', () => {
-    expect(readme).toMatch(/`=`/)
+  it('states the operation rules the machine enforces', () => {
+    expect(readme).toMatch(/replaces/i)
     expect(readme).toMatch(/sqrt|square root/i)
-    expect(readme).toMatch(/not (yet )?wired|inert|do(es)? nothing/i)
+    expect(readme).toMatch(/pending/)
+    expect(readme).not.toMatch(/not (yet )?wired/i)
+  })
+
+  // Slice 3: `=` emits a request nothing answers yet — the README must say so, and name the seam.
+  it('says `=` is a dead end until the API client lands, through the onRequest boundary', () => {
+    expect(readme).toMatch(/`=`/)
+    expect(readme).toMatch(/dead end/i)
+    expect(readme).toMatch(/Phase 4|API client/)
+    expect(readme).toMatch(/onRequest/)
   })
 })
