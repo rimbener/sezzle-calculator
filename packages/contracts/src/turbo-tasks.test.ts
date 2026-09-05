@@ -6,9 +6,9 @@ import turbo from "../../../turbo.json" with { type: "json" };
 // Characterization: pins the root task graph so a fix to one task shows the
 // others unchanged.
 describe("root turbo.json task graph", () => {
-  it("keeps the five root tasks", () => {
+  it("keeps the six root tasks", () => {
     expect(Object.keys(turbo.tasks).sort()).toEqual(
-      ["build", "check-types", "dev", "lint", "test"].sort(),
+      ["build", "check-types", "dev", "lint", "test", "test:watch"].sort(),
     );
   });
 
@@ -26,16 +26,28 @@ describe("root turbo.json task graph", () => {
     expect(turbo.tasks.test).toEqual({});
     expect(turbo.tasks.dev).toEqual({ cache: false, persistent: true });
   });
+
+  it("keeps test:watch persistent, interactive and uncached", () => {
+    expect(turbo.tasks["test:watch"]).toEqual({
+      cache: false,
+      persistent: true,
+      interactive: true,
+    });
+  });
 });
 
-// Characterization: pins the package-manager declaration Turborepo needs to
-// resolve the workspace. AGENTS.md § Commands carries the rationale; a change
-// here is a decision, not a cleanup.
-describe("root package.json package-manager declaration", () => {
-  it("declares npm ^11.0.0 through devEngines with onFail warn", () => {
+// Characterization: pins the runtime floor and the package-manager declaration
+// Turborepo needs to resolve the workspace. AGENTS.md § Commands carries the
+// rationale; a change here is a decision, not a cleanup.
+describe("root package.json engine declarations", () => {
+  it("floors Node at the 22.22.2 its dependencies require", () => {
+    expect(rootPackage.engines.node).toBe(">=22.22.2");
+  });
+
+  it("declares npm ^10.0.0 through devEngines with onFail warn", () => {
     expect(rootPackage.devEngines.packageManager).toEqual({
       name: "npm",
-      version: "^11.0.0",
+      version: "^10.0.0",
       onFail: "warn",
     });
   });

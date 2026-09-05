@@ -32,11 +32,12 @@ npx turbo dev --filter=sezzle-calculator
 npx turbo lint --filter=@repo/ui
 ```
 
-Node >= 24 is pinned via `engines` in the root `package.json`. `devEngines.packageManager` declares npm `^11.0.0` with `onFail: "warn"`. Turborepo 2 refuses to resolve the workspace without a package-manager declaration (`dangerouslyDisablePackageManagerCheck` drops the workspaces on 2.10.12), so one of the two forms has to be there. Notes on the choice, so it is not "fixed" by accident:
+Node >= 22.22.2 is pinned via `engines` in the root `package.json`. `devEngines.packageManager` declares npm `^10.0.0` with `onFail: "warn"`. Turborepo 2 refuses to resolve the workspace without a package-manager declaration (`dangerouslyDisablePackageManagerCheck` drops the workspaces on 2.10.12), so one of the two forms has to be there. Notes on the choice, so it is not "fixed" by accident:
 
 - `devEngines` is npm's own advisory field and `onFail: "warn"` keeps a mismatch from hard-failing `npm install`. Prefer it over the legacy `"packageManager"` field, which is Corepack's contract: wherever Corepack is enabled it becomes a hard pin that downloads and switches to that exact npm, with no `onFail` escape hatch.
 - Turbo rejects a `devEngines.packageManager.version` range spanning more than one major (`>=10` fails with `invalid_dev_engines_package_manager_field`), so the range cannot be left open.
-- `^11.0.0` is the major that stock Node 24 ships, matching `engines.node`. On an older npm every command prints an `EBADDEVENGINES` warning — that is the warning working as intended, not a misconfiguration; the fix is Node 24.
+- `^10.0.0` is the major that stock Node 22 ships, matching `engines.node`. On a different npm major every command prints an `EBADDEVENGINES` warning — that is the warning working as intended, not a misconfiguration. Node 24+ ships npm 11/12 and will warn; run the 22 line, or upgrade both together.
+- `22.22.2` is not arbitrary: it is the floor `jsdom` 30 asks for within the 22 line (`^22.22.2 || ^24.15.0 || >=26`), above `eslint` 10's `^22.13.0` and `vitest` 5 / `vite` 8's `^22.12.0`. It also clears 22.18, where Node began stripping types without a flag — `calc-service` runs its `.ts` sources directly and imports `@repo/contracts` across the workspace symlink, so anything lower cannot boot the service. `@types/node` tracks the same line at 22.20.1 in all three workspaces that depend on it.
 
 Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`), with `test:watch` (`vitest watch`) as the persistent watch-mode counterpart; `packages/contracts/src/*.test.ts` and `apps/calc-service/src/**/*.test.ts` are the suites so far, and `apps/sezzle-calculator` and `packages/ui` still have none. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
 

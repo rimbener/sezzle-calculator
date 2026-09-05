@@ -78,7 +78,7 @@ plus route tests for status codes.
 - Operand counts: 1 for `sqrt`, 2 for the other six.
 - Non-finite results — overflow to `Infinity`, or `NaN` from `(-8) ^ 0.5` —
   are `RESULT_NOT_FINITE`, not a crash and not `NaN` in the response body.
-- Vitest, no Jest. Node >= 24.
+- Vitest, no Jest. Node >= 22.22.2.
 - IEEE-754 doubles are acceptable; arbitrary precision is a documented non-goal.
 - Calculation modules import no HTTP code — that is the testable boundary.
 

@@ -17,9 +17,9 @@ Start the service with:
 npx turbo dev --filter=calc-service
 ```
 
-That runs `node --watch src/server.ts` — no build step; Node 24 strips the
-types itself. `npm start` in this directory runs the same entry once, without
-the watcher.
+That runs `node --watch src/server.ts` — no build step; Node strips the
+types itself (unflagged since 22.18). `npm start` in this directory runs the
+same entry once, without the watcher.
 
 The port comes from `CALC_SERVICE_PORT` and defaults to **3001** when the
 variable is absent. Change the variable, not the code:
