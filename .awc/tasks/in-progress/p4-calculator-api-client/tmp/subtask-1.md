@@ -2,7 +2,7 @@
 
 - **slice:** 1 — the gateway API client module
 - **criteria:** AC-1, AC-2, AC-3, AC-4, AC-5, AC-6, AC-7
-- **status:** todo
+- **status:** done
 - **paths:** `apps/sezzle-calculator/src/api/client.ts`, `apps/sezzle-calculator/src/api/client.test.ts`, `apps/sezzle-calculator/src/frontend-purity.test.ts`
 
 FE-7's "one typed module": config resolution, the `fetch` call and classification, together in one file — no split by concern (`spec.md`, "Approach"). Modeled on `apps/api-gateway/src/calc-client.ts`'s shape one layer up: a factory taking the gateway URL and an injectable `fetch`-shaped function, returning `(request: CalculateRequest) => Promise<CalculationOutcome>` (`CalculationOutcome` from `../calculator/state`) that never rejects.
