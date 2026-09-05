@@ -4,7 +4,7 @@ This file provides guidance to Agents like Claude Code (claude.ai/code) when wor
 
 ## What this is
 
-A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`) is a React SPA plus two backend microservices. Today the frontend app, the shared UI package, the shared contract package (`@repo/contracts`), the calculation service (`apps/calc-service`, answering `POST /calculate` on :3001) and the API gateway (`apps/api-gateway`, answering `POST /api/v1/calculate` on :3000) exist; the SPA does not yet call the gateway and today renders only the design-system showcase.
+A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`) is a React SPA plus two backend microservices. Today the frontend app, the shared UI package, the shared contract package (`@repo/contracts`), the calculation service (`apps/calc-service`, answering `POST /calculate` on :3001) and the API gateway (`apps/api-gateway`, answering `POST /api/v1/calculate` on :3000) exist; the SPA renders the calculator shell over `@repo/ui` but does not yet call the gateway — it owns no arithmetic and makes no network calls of its own.
 
 `docs/` is the source of truth for scope and is worth reading before non-trivial work:
 
@@ -39,7 +39,7 @@ Node >= 22.22.2 is pinned via `engines` in the root `package.json`. `devEngines.
 - `^10.0.0` is the major that stock Node 22 ships, matching `engines.node`. On a different npm major every command prints an `EBADDEVENGINES` warning — that is the warning working as intended, not a misconfiguration. Node 24+ ships npm 11/12 and will warn; run the 22 line, or upgrade both together.
 - `22.22.2` is not arbitrary: it is the floor `jsdom` 30 asks for within the 22 line (`^22.22.2 || ^24.15.0 || >=26`), above `eslint` 10's `^22.13.0` and `vitest` 5 / `vite` 8's `^22.12.0`. It also clears 22.18, where Node began stripping types without a flag — `calc-service` and `api-gateway` run their `.ts` sources directly and import `@repo/contracts` across the workspace symlink, so anything lower cannot boot either service. `@types/node` tracks the same line at 22.20.1 in all four workspaces that depend on it.
 
-Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`), with `test:watch` (`vitest watch`) as the persistent watch-mode counterpart; `packages/contracts/src/*.test.ts`, `apps/calc-service/src/**/*.test.ts` and `apps/api-gateway/src/*.test.ts` are the suites so far, and `apps/sezzle-calculator` and `packages/ui` still have none. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
+Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`), with `test:watch` (`vitest watch`) as the persistent watch-mode counterpart; the suites are `packages/contracts/src/*.test.ts`, `apps/calc-service/src/**/*.test.ts`, `apps/api-gateway/src/*.test.ts`, `apps/sezzle-calculator/src/**/*.test.ts(x)` and `packages/ui/src/*.test.tsx`. The two React workspaces render with React Testing Library under jsdom, and each registers `afterEach(cleanup)` in its `src/test/setup.ts` — Vitest runs without globals here, so Testing Library does not auto-clean on its own. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
 
 ## Monorepo layout
 
@@ -60,7 +60,7 @@ One known rough edge to be aware of rather than "fix" by accident:
 
 Consumed as source — there is no build step. `package.json` exports:
 
-- `.` → `src/index.ts` (barrel: `Button`, `Card`, `Badge`, `Key`, `Display`, `Callout`, `BusyLamp`, `Input`, `Toggle`, each with its prop types)
+- `.` → `src/index.ts` (barrel: `Button`, `Card`, `Badge`, `Key`, `Keypad`, `Display`, `Callout`, `BusyLamp`, `Input`, `Toggle`, each with its prop types)
 - `./*` → `src/*.tsx` (subpath import, e.g. `@repo/ui/badge`)
 - `./styles.css` → the design-system entry point
 

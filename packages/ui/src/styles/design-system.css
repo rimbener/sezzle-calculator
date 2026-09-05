@@ -75,13 +75,6 @@
   color: var(--text-muted);
 }
 
-.ds-keypad {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(var(--key-size-sm), var(--key-size)));
-  gap: var(--space-3);
-  width: fit-content;
-}
-
 .ds-field-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
