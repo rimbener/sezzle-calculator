@@ -1,0 +1,76 @@
+name: prd-to-spec
+description: One group of PRD requirements → a user story, an interviewed and reviewed spec bundle, approved by the human and committed on the current branch
+
+inputs:
+  - name: task      # id of letters, digits, hyphens, underscores; names .awc/tasks/in-progress/<task>/
+  - name: request   # the PRD requirement ids this task covers plus a one-line title, e.g. "BE-1, BE-3, BE-8, XC-1: shared contract package and calc-service"
+
+vars:
+  prd: docs/PRD-P0.md   # the document the requirement ids in the request point into
+  format: plain         # shape of acceptance-criteria.md
+
+nodes:
+  # The lead runs the story capture itself, in conversation with the human:
+  # it reads the named PRD sections and asks only what they leave open.
+  - id: story
+    inline:
+      agent: agents/story_partner.md
+      prompt: "Task: {{task}}. Mode: capture-and-confirm. Source: {{request}} (the requirement ids refer to sections of {{prd}})."
+      expect: user_story
+
+  # The spec interview, also in the lead's own session. Writes spec.md,
+  # acceptance-criteria.md, tmp/subtasks.md and tmp/subtask-N.md.
+  - id: spec
+    inline:
+      agent: agents/spec_partner.md
+      prompt: "Task: {{task}}. Mode: write-bundle. Format: {{format}}."
+      expect: spec_drafted
+
+  # One automated review round before the human sees the bundle.
+  - id: spec-review
+    agent: agents/spec_reviewer.md
+    prompt: "Task: {{task}}. Mode: review. Verdict-writer: workflows/prd-to-spec/scripts/write-verdict-file.sh."
+    expect: [APPROVED, CHANGES_REQUESTED]
+    allowed_tools: [read, search, edit, web, shell]
+
+  # Runs only when the reviewer's one-word verdict file asks for changes.
+  - id: spec-fix
+    when: grep -qx CHANGES_REQUESTED .awc/tasks/in-progress/{{task}}/tmp/review-spec-verdict.md
+    agent: agents/spec_partner.md
+    prompt: "Task: {{task}}. Mode: fix-spec-findings. Format: {{format}}."
+    expect: findings_resolved
+
+  # Tightens wording only, so the human approves the text that lands.
+  - id: spec-shrink
+    agent: agents/text_shrinker.md
+    prompt: "Task: {{task}}. Mode: shrink-spec."
+    expect: trimmed
+    allowed_tools: [read, search, edit, web]
+
+  # The single human sign-off: each round presents, applies edits, and closes
+  # with the token only after an explicit approval.
+  - id: spec-approval
+    loop:
+      agent: agents/spec_partner.md
+      prompt: "Task: {{task}}. Mode: present-for-approval. Format: {{format}}. The human's response: {{answer}}"
+      expect: SPEC_APPROVED
+      until: SPEC_APPROVED
+      max_iterations: 10
+
+  # The approved bundle and its trail land in history together.
+  - id: commit-spec
+    agent: agents/committer.md
+    prompt: "Task: {{task}}. Mode: commit. Paths: .awc/tasks/in-progress/{{task}}. Message: docs(spec): {{task}} — {{request}}"
+    expect: [committed, unchanged]
+    allowed_tools: [read, search, shell, web]
+
+  # Archives the trail to .awc/tasks/done/<task>/. Last node that touches it.
+  - id: finish
+    run: workflows/prd-to-spec/scripts/finish-task.sh {{task}}
+
+  # Records the archive move.
+  - id: commit-archive
+    agent: agents/committer.md
+    prompt: "Task: {{task}}. Mode: commit. Paths: .awc/tasks/in-progress/{{task}} .awc/tasks/done/{{task}}. Message: chore(spec): archive {{task}} task trail"
+    expect: [committed, unchanged]
+    allowed_tools: [read, search, shell, web]

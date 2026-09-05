@@ -171,3 +171,93 @@ BRAND.md now names the token for every value instead of just printing hex: --key
 > create a simple script to write session prompts into @docs/prompts.md . the skill should write the session prompts but not it's own invocation
 
 **Result:** `.claude/commands/save-prompts.md` — a `/save-prompts` slash command that appends the session's prompts to this file, continuing the existing numbering, keeping each prompt verbatim as a blockquote with a `**Result:**` line, skipping prompts already recorded and excluding its own invocation. Append-only: it never renumbers or rewrites earlier entries.
+
+## 16. Agentic workflow: prd-to-spec
+
+Session started through awc (agentic-workflow-creator), which loaded the `workflow-creator` skill and ran a one-question-per-turn interview.
+
+### 16.1 — Session opener (awc-generated)
+
+> This session was started by awc (agentic-workflow-creator). The `workflow-creator` skill from the awc plugin is loaded, along with the `/awc-status` command.
+>
+> Briefly greet the user, then ask what agentic workflow they want to build and use the workflow-creator skill to guide the process.
+
+**Result:** Loaded the skill and its references, ran repo recon (toolchain, scripts, PRD, missing tests, Node 22 vs `>=24` pin, three planned workflows in `TODO.md`), and asked which workflow to build.
+
+### 16.2
+
+> I want to do one that covers PRD requirement → story → spec
+
+**Result:** Scope settled as a documents-only workflow; build, testing, mutation, code review and DoD areas skipped. Asked what one task is.
+
+### 16.3
+
+> a group of related requirements you name in the request
+
+**Result:** Task unit settled. Asked for the workflow name.
+
+### 16.4
+
+> prd-to-spec.
+
+**Result:** Name settled. Asked about launch inputs.
+
+### 16.5
+
+> go with your recommendation
+
+**Result:** Inputs settled as `task` + `request`, with `docs/PRD-P0.md` as a fixed `prd` var. Asked worktree vs in place.
+
+### 16.6
+
+> in place
+
+**Result:** In-place run on the current branch; no launch script. Bootstrap skipped. Asked how the user story gets written.
+
+### 16.7
+
+> go with your recommendation
+
+**Result:** Story step settled as `story_partner` in `capture-and-confirm` mode with the request as source. Asked Gherkin vs plain.
+
+### 16.8
+
+> plain
+
+**Result:** Plain acceptance criteria. Asked about an automated spec review round.
+
+### 16.9
+
+> yes
+
+**Result:** One `spec_reviewer` round with a guarded fix step. Asked about shrinking the spec wording.
+
+### 16.10
+
+> yes
+
+**Result:** `text_shrinker` in `shrink-spec` mode before approval. Asked about committing after approval and the message convention.
+
+### 16.11
+
+> yes
+
+**Result:** An authored committer agent commits the bundle and trail as `docs(spec): <task> — <request>`, then the archive move. Asked push vs stop.
+
+### 16.12
+
+> stop
+
+**Result:** Run ends at the local commits, no push. Asked about tool scopes.
+
+### 16.13
+
+> yes
+
+**Result:** Scopes settled for the reviewer, shrinker and committer; interview nodes take none. Read the bundled agent files and presented the nine-node design table for approval.
+
+### 16.14
+
+> yes, and add to .gitignore whatever you need
+
+**Result:** Wrote the package: `workflows/prd-to-spec/` (`prd-to-spec.yaml`, `README.md`, verbatim `running.md`, agents `workflow_lead`, `story_partner` trimmed to capture-and-confirm, `spec_partner`, `spec_reviewer`, `text_shrinker` trimmed to shrink-spec, authored `committer`; scripts `finish-task.sh`, `write-verdict-file.sh`), the three launchers `.claude/commands/prd-to-spec.md`, `.codex/skills/prd-to-spec/SKILL.md`, `.opencode/command/prd-to-spec.md`, and added `.awc-tmp/` to `.gitignore`. Validated YAML structure, verbatim copies, placeholders and launcher slots.
