@@ -40,3 +40,5 @@ No `refactor:` entry on subtask-4 or subtask-5, so none owed. Docs landed in-sli
 - `app.onError` replaces Hono's default handler, which also `console.error`s the error; the 500 path here logs nothing, so an unexpected failure is visible only as the response. No criterion asks for operator logging.
 - `resolvePort` does not validate the variable: `CALC_SERVICE_PORT=abc` yields `NaN` and `serve` rejects; `CALC_SERVICE_PORT=` (empty) is `Number("") === 0`, an OS-chosen port — which `start` now reports as bound (F-1). AC-15 covers absent and set-to-a-port only.
 - `server.ts` binds on Node's default host (all interfaces); the spec fixes no hostname for the internal service.
+
+closing-commit: 67d8a0f
