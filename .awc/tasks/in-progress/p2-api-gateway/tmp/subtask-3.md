@@ -2,7 +2,7 @@
 
 - **slice:** 2 — the client
 - **criteria:** AC-6, AC-7, AC-8, AC-9, AC-10
-- **status:** todo
+- **status:** done
 - **paths:** `apps/api-gateway/src/calc-client.ts`, `apps/api-gateway/src/calc-client.test.ts`
 
 The whole downstream conversation, in one module with no Hono in it. It is built from the resolved config plus a fetch-shaped function, so a test supplies a fake while the real deadline, retry, classification and parsing all run (`spec.md` § Approach).
