@@ -31,3 +31,5 @@ No `refactor:` entry on subtask-3, so none owed. Docs landed in-slice: the READM
 10. RED `registry.test.ts` → GREEN `registry.ts`: `Readonly<Record<Operation, OperationFn>>`, `tsc` accepts the fixed-arity functions against `(...operands: number[]) => number`.
 11. RED `calculate.test.ts` success table → GREEN `calculate.ts` lookup + spread. RED AC-8 non-finite table → GREEN `Number.isFinite` guard raising `RESULT_NOT_FINITE`. AC-7 pass-through table green on arrival (pin). `domain-purity.test.ts` green on arrival; proved red by injecting `import "node:http"` into `add.ts`, then reverted.
 12. Prettier `--write` on four files (formatting only); docs: `AGENTS.md` parity. Final `--force` run 12/12, exit 0.
+
+closing-commit: 4287dc7
