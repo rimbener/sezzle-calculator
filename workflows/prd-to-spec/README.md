@@ -6,11 +6,12 @@ One run takes a task id and a request naming the requirement ids (for example
 those sections of `docs/PRD-P0.md`, interviews you for what the PRD leaves
 open, writes the user story and the spec bundle, has the bundle reviewed and
 tightened, waits for your approval, and commits the result on the current
-branch. The code workflow that comes later reads the bundle it leaves behind.
+branch. The bundle lands under `.awc/tasks/spec-ready/<task>/`, where the
+`spec-to-code` workflow picks it up.
 
 ## What a run produces
 
-Under `.awc/tasks/done/<task>/` once the run ends:
+Under `.awc/tasks/spec-ready/<task>/` once the run ends:
 
 | File | Written by |
 | --- | --- |
@@ -23,8 +24,8 @@ Under `.awc/tasks/done/<task>/` once the run ends:
 | `tmp/shrink-spec.md` | what the wording pass cut |
 
 Two commits land on the current branch: `docs(spec): <task> — <request>` with
-the bundle and its trail, then `chore(spec): archive <task> task trail` with
-the move to `done/`.
+the bundle and its trail, then `chore(spec): hand off <task> to spec-to-code`
+with the move to `spec-ready/`.
 
 ## How to launch
 
@@ -57,8 +58,8 @@ when you relaunch it with the same arguments.
 | 5 | `spec-shrink` | agent | `text_shrinker` tightens the bundle's wording, meaning unchanged | `trimmed` |
 | 6 | `spec-approval` | loop, cap 10 | `spec_partner` presents the bundle, applies your edits, closes on your explicit approval | `SPEC_APPROVED` |
 | 7 | `commit-spec` | agent | `committer` stages `.awc/tasks/in-progress/<task>` and commits | `committed` / `unchanged` |
-| 8 | `finish` | run | `scripts/finish-task.sh` moves the trail to `.awc/tasks/done/<task>/` | exit 0 |
-| 9 | `commit-archive` | agent | `committer` stages the moved paths and commits | `committed` / `unchanged` |
+| 8 | `handoff` | run | `scripts/handoff-task.sh` moves the trail to `.awc/tasks/spec-ready/<task>/` | exit 0 |
+| 9 | `commit-handoff` | agent | `committer` stages the moved paths and commits | `committed` / `unchanged` |
 
 Every node runs in order; each one reads what the one before it wrote.
 
@@ -85,7 +86,7 @@ workflows/prd-to-spec/
 │   ├── text_shrinker.md  # shrink-spec
 │   └── committer.md      # commit
 └── scripts/
-    ├── finish-task.sh          # archives the task trail
+    ├── handoff-task.sh         # hands the task trail to spec-to-code
     └── write-verdict-file.sh   # records a reviewer verdict as a one-line file
 .claude/commands/prd-to-spec.md     # launcher — Claude Code
 .codex/skills/prd-to-spec/SKILL.md  # launcher — Codex

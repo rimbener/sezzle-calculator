@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Archives one task's artifact trail: .awc/tasks/in-progress/<task>/ becomes
-# .awc/tasks/done/<task>/, tmp/ and all. Copied verbatim into a generated
-# package as scripts/finish-task.sh and run by the workflow's last node.
+# Hands one task's artifact trail to the code workflow:
+# .awc/tasks/in-progress/<task>/ becomes .awc/tasks/spec-ready/<task>/, tmp/
+# and all. Run by the workflow's last trail-touching node.
 #
-#   finish-task.sh <task>
+#   handoff-task.sh <task>
 #
 # Moving the files (and tidying the then-empty in-progress/ container) is all
 # it does — committing the move belongs to the workflow. Silent on success;
@@ -26,22 +26,22 @@ if [[ ! "$task" =~ ^[A-Za-z0-9_-]+$ ]]; then
 fi
 
 in_progress=".awc/tasks/in-progress/$task"
-done_dir=".awc/tasks/done/$task"
+ready_dir=".awc/tasks/spec-ready/$task"
 
 # A resumed run reaching this node a second time is already finished.
 if [[ ! -d "$in_progress" ]]; then
-  if [[ -d "$done_dir" ]]; then
+  if [[ -d "$ready_dir" ]]; then
     exit 0
   fi
-  echo "no trail to archive: $in_progress does not exist" >&2
+  echo "no trail to hand off: $in_progress does not exist" >&2
   exit 1
 fi
 
-if [[ -e "$done_dir" ]]; then
-  echo "$done_dir already exists; move or remove it before archiving $in_progress" >&2
+if [[ -e "$ready_dir" ]]; then
+  echo "$ready_dir already exists; move or remove it before handing off $in_progress" >&2
   exit 1
 fi
 
-mkdir -p "$(dirname "$done_dir")"
-mv "$in_progress" "$done_dir"
+mkdir -p "$(dirname "$ready_dir")"
+mv "$in_progress" "$ready_dir"
 rmdir .awc/tasks/in-progress 2>/dev/null || true

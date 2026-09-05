@@ -1,5 +1,5 @@
 name: prd-to-spec
-description: One group of PRD requirements → a user story, an interviewed and reviewed spec bundle, approved by the human and committed on the current branch
+description: One group of PRD requirements → a user story, an interviewed and reviewed spec bundle, approved by the human, committed on the current branch and handed to the code workflow under .awc/tasks/spec-ready/<task>/
 
 inputs:
   - name: task      # id of letters, digits, hyphens, underscores; names .awc/tasks/in-progress/<task>/
@@ -64,13 +64,14 @@ nodes:
     expect: [committed, unchanged]
     allowed_tools: [read, search, shell, web]
 
-  # Archives the trail to .awc/tasks/done/<task>/. Last node that touches it.
-  - id: finish
-    run: workflows/prd-to-spec/scripts/finish-task.sh {{task}}
+  # Hands the trail to the code workflow at .awc/tasks/spec-ready/<task>/.
+  # Last node that touches it.
+  - id: handoff
+    run: workflows/prd-to-spec/scripts/handoff-task.sh {{task}}
 
-  # Records the archive move.
-  - id: commit-archive
+  # Records the handoff move.
+  - id: commit-handoff
     agent: agents/committer.md
-    prompt: "Task: {{task}}. Mode: commit. Paths: .awc/tasks/in-progress/{{task}} .awc/tasks/done/{{task}}. Message: chore(spec): archive {{task}} task trail"
+    prompt: "Task: {{task}}. Mode: commit. Paths: .awc/tasks/in-progress/{{task}} .awc/tasks/spec-ready/{{task}}. Message: chore(spec): hand off {{task}} to spec-to-code"
     expect: [committed, unchanged]
     allowed_tools: [read, search, shell, web]
