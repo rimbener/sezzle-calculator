@@ -2,7 +2,7 @@
 
 - **slice:** 3 — the HTTP surface
 - **criteria:** AC-10, AC-11, AC-12, AC-13, AC-14
-- **status:** todo
+- **status:** done
 - **paths:** `apps/calc-service/src/app.ts`, `apps/calc-service/src/app.test.ts`
 
 The Hono app, exported separately from the server entry so tests drive it through `app.fetch` with no port bound.

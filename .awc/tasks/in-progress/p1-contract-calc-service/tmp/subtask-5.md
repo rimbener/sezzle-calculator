@@ -2,7 +2,7 @@
 
 - **slice:** 3 — the HTTP surface
 - **criteria:** AC-15, AC-16, AC-19
-- **status:** todo
+- **status:** done
 - **paths:** `apps/calc-service/package.json`, `apps/calc-service/src/server.ts`, `apps/calc-service/src/config.ts`, `apps/calc-service/src/config.test.ts`, `apps/calc-service/src/server.test.ts`, `apps/calc-service/README.md`
 
 `config.ts` resolves the port from `CALC_SERVICE_PORT`, defaulting to 3001 when the variable is absent, and is a pure function of an environment object so resolution is testable without starting anything (AC-15).

@@ -1,20 +1,24 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-// AC-9: the calculation domain is exercisable with no HTTP present. Every module
-// under src/ — sources and tests alike — imports only the contract, vitest, or
-// each other. This file is the one exception (it needs the filesystem to look).
+// AC-9: the calculation domain is exercisable with no HTTP present. Every module of
+// the domain — sources and tests alike — imports only the contract, vitest, or each
+// other. The domain is named here so the HTTP layer beside it (`app.ts`, `server.ts`,
+// `config.ts` and their tests) is never scanned and never has to be listed.
 const SRC = join(import.meta.dirname, ".");
-const SELF = "domain-purity.test.ts";
+const DOMAIN = [
+  "operations",
+  "calculate.ts",
+  "calculate.test.ts",
+  "calculation-error.ts",
+];
 const ALLOWED = ["@repo/contracts", "vitest"];
 
-const domainFiles = (dir: string): string[] =>
-  readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(dir, entry.name);
-    if (entry.isDirectory()) return domainFiles(path);
-    return entry.name.endsWith(".ts") && entry.name !== SELF ? [path] : [];
-  });
+const tsFilesUnder = (path: string): string[] => {
+  if (!statSync(path).isDirectory()) return path.endsWith(".ts") ? [path] : [];
+  return readdirSync(path).flatMap((name) => tsFilesUnder(join(path, name)));
+};
 
 const importSpecifiers = (source: string): string[] =>
   [...source.matchAll(/^import\b[^"']*["']([^"']+)["']/gm)].map(
@@ -22,10 +26,14 @@ const importSpecifiers = (source: string): string[] =>
   );
 
 describe("calculation domain (AC-9)", () => {
-  it("has no HTTP anywhere: every import is the contract, vitest or a sibling module", () => {
-    const files = domainFiles(SRC);
-    expect(files.length).toBeGreaterThan(0);
+  const files = DOMAIN.flatMap((entry) => tsFilesUnder(join(SRC, entry)));
 
+  it("names every domain module", () => {
+    expect(files.length).toBeGreaterThan(DOMAIN.length);
+    expect(files).toContain(join(SRC, "operations", "registry.ts"));
+  });
+
+  it("has no HTTP anywhere: every import is the contract, vitest or a sibling module", () => {
     for (const file of files) {
       const foreign = importSpecifiers(readFileSync(file, "utf8")).filter(
         (specifier) =>
