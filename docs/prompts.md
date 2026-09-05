@@ -165,3 +165,9 @@ BRAND.md now names the token for every value instead of just printing hex: --key
 > ok, but move the files into @../../packages/ui/ and just import it on @src/App.tsx
 
 **Result:** Gallery moved to `packages/ui/src/design-system.tsx` (restyled to the package's own conventions: semicolons, double quotes, relative sibling imports) and `packages/ui/src/styles/design-system.css`, which `styles/styles.css` now `@import`s — keeping the CSS out of the `.tsx` so `tsc --noEmit` still resolves. Exported from the barrel, so both `@repo/ui` and `@repo/ui/design-system` resolve it. `App.tsx` reduced to importing and rendering `<DesignSystem />`.
+
+## 15. Prompt log command
+
+> create a simple script to write session prompts into @docs/prompts.md . the skill should write the session prompts but not it's own invocation
+
+**Result:** `.claude/commands/save-prompts.md` — a `/save-prompts` slash command that appends the session's prompts to this file, continuing the existing numbering, keeping each prompt verbatim as a blockquote with a `**Result:**` line, skipping prompts already recorded and excluding its own invocation. Append-only: it never renumbers or rewrites earlier entries.
