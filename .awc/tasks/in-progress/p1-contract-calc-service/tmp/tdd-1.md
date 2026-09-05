@@ -31,3 +31,5 @@ At HEAD (`240d074 fix: node version`) the verification command could not run at 
 9. Fix step, F-2: RED `turbo-tasks.test.ts` pinning `dangerouslyDisablePackageManagerCheck: true` + no root pin → GREEN attempt: key added, block removed → `turbo run` finds no workspaces (root-only graph, `recursive_turbo_invocations`; `turbo ls` alone infers npm from the lockfile). Mechanism unusable on 2.10.12; test and key reverted, block restored. F-2 stays open for the human.
 10. Fix step, F-1 + F-3: `npm run build` run and recorded (no code); `CLAUDE.md` brought level with the tree (docs only).
 11. Fix step, F-2 ratified by the human (`^11.0.0`, `onFail: warn`): pin added to `turbo-tasks.test.ts` (block + no Corepack field), green on arrival; `spec.md` § Surfaces touched gains the root `package.json` row; F-2 marked resolved. No production change.
+
+closing-commit: c868309
