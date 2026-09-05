@@ -102,3 +102,53 @@ Prompts used with Claude Code to produce `docs/PRD.md`, in order. Each entry is 
 > now split the PRD.md into two files: PRD-P0.md and PRD-P1.md
 
 **Result:** `docs/PRD.md` replaced by `docs/PRD-P0.md` (must-have scope: goals, architecture, all P0 requirements, use cases, API contract, open questions, Phases 1–4) and `docs/PRD-P1.md` (P1 priority order, P1/P2 requirements, UC-9, health API contract, Phase 5). Requirement and use-case IDs unchanged; cross-references link between the files.
+
+## 13. Design system build
+
+### 13.1 — Opening brief (form-generated)
+
+> We will create a design system in this project.
+>
+> **Company description:** Sezzle Calculator: A simple calculator app
+>
+> **Attached codebases** (read-only, mounted via File System Access API):
+> - `sezzle-calculator/` — explore with local_ls first, then local_read; use local_grep only to search file contents. Paths start with `sezzle-calculator/`
+>
+> **Additional notes:**
+> I want to create a new design system for the project described in PRD-P0.md, I want a simple retro design.
+>
+> *(followed by the standard design-system build instructions: explore assets, write readme.md, set project title, write token CSS, document content fundamentals and visual foundations, create specimen cards, copy assets, author components, build UI kits, write SKILL.md)*
+
+### 13.2
+
+> Create the components into the code base
+
+**Result:** Generating the real .tsx + vanilla-CSS files, ready to drop into packages/ui.
+All nine components are written as real TypeScript — no hand-porting needed. Unzip into packages/ui/ and you get:
+
+button/card/badge/key/display/callout/busy-lamp/input/toggle.tsx — typed props extending the right DOM interfaces, useId label association, no inline styles
+styles/components.css — every class in vanilla CSS, tokens only, zero raw hex, with prefers-reduced-motion handling
+index.ts — barrel exporting components and prop types
+package.json.example — merge the exports and sideEffects keys into yours
+Then import "@repo/ui/styles.css" once and import { Key, Display } from "@repo/ui".
+
+Three things to delete: the starter button.tsx (it fires an alert()), card.tsx, and code.tsx.
+
+### 13.3
+
+> Create a simple skill, without code, css, etc
+
+**Result:** Two files: SKILL.md and BRAND.md. Unzip into .claude/skills/sezzle-calculator-design/ — no tokens, no CSS, no components, no UI kit.
+
+BRAND.md carries the whole system in prose: hex values as a plain list, type roles, construction rules (2px borders, hard offset shadows, the 4px press), states, iconography, voice, and a short description of each element so Claude can write the markup itself rather than copying files.
+
+Trade-off worth knowing: without tokens/, output won't use var(--…) — it'll write literal hex. Fine for mocks and prototypes; for production in the real repo, use the full version so the code stays token-driven.
+
+### 13.4
+
+> add tokens into the little skill
+
+
+**Result:** Now SKILL.md + BRAND.md + styles.css + tokens/ — ten files, still no components or UI kit.
+
+BRAND.md now names the token for every value instead of just printing hex: --key-operator rather than #F0A93B, font: var(--type-key) rather than a hand-assembled font stack. SKILL.md tells Claude to link styles.css and never write a raw hex — so output stays token-driven and drops straight into the real repo.

@@ -1,27 +1,25 @@
-import { type JSX } from "react";
+import { clsx } from "clsx";
+import type { HTMLAttributes, ReactNode } from "react";
 
-export function Card({
-  className,
-  title,
-  children,
-  href,
-}: {
-  className?: string;
-  title: string;
-  children: React.ReactNode;
-  href: string;
-}): JSX.Element {
+export interface CardProps extends Omit<HTMLAttributes<HTMLElement>, "title"> {
+  title?: ReactNode;
+  eyebrow?: ReactNode;
+  footer?: ReactNode;
+  tone?: "paper" | "sunken";
+  children?: ReactNode;
+}
+
+export function Card({ title, eyebrow, footer, tone = "paper", className, children, ...rest }: CardProps) {
   return (
-    <a
-      className={className}
-      href={`${href}?utm_source=create-turbo&utm_medium=basic&utm_campaign=create-turbo"`}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <h2>
-        {title} <span>-&gt;</span>
-      </h2>
-      <p>{children}</p>
-    </a>
+    <section className={clsx("sc-card", tone === "sunken" && "sc-card--sunken", className)} {...rest}>
+      {(title || eyebrow) && (
+        <header className="sc-card__head">
+          {eyebrow && <span className="sc-card__eyebrow">{eyebrow}</span>}
+          {title && <h2 className="sc-card__title">{title}</h2>}
+        </header>
+      )}
+      <div className="sc-card__body">{children}</div>
+      {footer && <footer className="sc-card__foot">{footer}</footer>}
+    </section>
   );
 }

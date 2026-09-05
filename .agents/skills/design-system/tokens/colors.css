@@ -1,0 +1,66 @@
+:root{
+  /* Paper — warm plastic shell */
+  --paper-0:#FBF6EA;
+  --paper-1:#F1E7D2;
+  --paper-2:#E3D5B8;
+  --paper-3:#CFBE9C;
+
+  /* Ink — near-black warm neutrals */
+  --ink-0:#1C1915;
+  --ink-1:#3B352C;
+  --ink-2:#6B6152;
+  --ink-3:#9A8E7A;
+
+  /* LCD — the readout panel */
+  --lcd-0:#242B20;
+  --lcd-1:#333C2C;
+  --lcd-ink:#C3E86B;
+  --lcd-ink-dim:#5E7A34;
+  --lcd-glow:rgba(195,232,107,.35);
+
+  /* Accents */
+  --sunset:#E4572E;
+  --sunset-deep:#B23C1C;
+  --mustard:#F0A93B;
+  --mustard-deep:#C4801E;
+  --teal:#2A8C7C;
+  --teal-deep:#1E6558;
+  --sky:#4A7FA5;
+  --plum:#7C4A6E;
+
+  /* Semantic aliases */
+  --surface-page:var(--paper-1);
+  --surface-card:var(--paper-0);
+  --surface-sunken:var(--paper-2);
+  --surface-shell:var(--paper-2);
+  --surface-readout:var(--lcd-0);
+  --surface-invert:var(--ink-0);
+
+  --text-heading:var(--ink-0);
+  --text-body:var(--ink-1);
+  --text-muted:var(--ink-2);
+  --text-invert:var(--paper-0);
+  --text-readout:var(--lcd-ink);
+  --text-readout-muted:var(--lcd-ink-dim);
+  --text-link:var(--sunset-deep);
+  --text-link-hover:var(--sunset);
+
+  --border-strong:var(--ink-0);
+  --border-soft:var(--paper-3);
+  --border-readout:var(--ink-0);
+
+  --key-number:var(--paper-0);
+  --key-operator:var(--mustard);
+  --key-function:var(--paper-2);
+  --key-equals:var(--teal);
+  --key-clear:var(--sunset);
+
+  --state-danger:var(--sunset);
+  --state-danger-deep:var(--sunset-deep);
+  --state-warning:var(--mustard);
+  --state-success:var(--teal);
+  --state-info:var(--sky);
+  --state-disabled:var(--paper-3);
+
+  --focus-ring:var(--sky);
+}
