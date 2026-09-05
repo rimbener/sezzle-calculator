@@ -13,11 +13,11 @@ export const GATEWAY_URL_VARIABLE = 'VITE_GATEWAY_URL'
 /** The dev gateway: the api-gateway's own default port. */
 export const DEFAULT_GATEWAY_URL = 'http://localhost:3000'
 
-/** `env[name]`, or the dev default when the variable is unset — the services' config-resolver pattern, client-side. */
+/** `env[name]`, or the dev default when the variable is unset. */
 export const resolveGatewayUrl = (env: Readonly<Record<string, string | undefined>>): string =>
   env[GATEWAY_URL_VARIABLE] ?? DEFAULT_GATEWAY_URL
 
-/** The codes the gateway answers 422 with — calc-service's own math rejections, relayed unchanged. */
+/** The codes the gateway answers 422 with — calc-service's math rejections, relayed unchanged. */
 export type DomainErrorCode = Extract<ErrorCode, 'DIVISION_BY_ZERO' | 'NEGATIVE_SQRT' | 'RESULT_NOT_FINITE'>
 
 const DOMAIN_ERROR_CODES: ReadonlySet<ErrorCode> = new Set<DomainErrorCode>([
@@ -36,13 +36,13 @@ const isServiceUnavailable = (body: unknown): boolean => {
     && parsed.data.error.code === ERROR_CODES.SERVICE_UNAVAILABLE
 }
 
-/** A 502/504 behind the gateway, rewritten for the end user (FE-4's own quote) — never the gateway's raw outage wording. */
+/** The end-user wording for a 502/504 outage (FE-4's quote) — never the gateway's raw wording. */
 export const OUTAGE_MESSAGE = 'Calculations are temporarily unavailable — try again.'
 
 /** `fetch` itself threw — the gateway is unreachable (UC-8's own quote). */
 export const NETWORK_MESSAGE = 'Can\'t reach the calculation service — try again.'
 
-/** Any reply matching none of the documented shapes (decided in the spec interview). */
+/** For a reply matching none of the documented shapes. */
 export const UNEXPECTED_MESSAGE = 'Something went wrong — try again.'
 
 /** The slice of `fetch` the client needs; tests pass a fake. */
@@ -55,7 +55,7 @@ export type CreateCalculateClientOptions = {
   fetch?: FetchLike
 }
 
-/** Answers one request with the contract's success or error body, and never rejects (`Calculator`'s `onRequest` contract). */
+/** Never rejects — `Calculator`'s `onRequest` contract. */
 export type CalculateClient = (request: CalculateRequest) => Promise<CalculationOutcome>
 
 /** The reply body parsed, or `undefined` when it is not JSON. */
@@ -68,11 +68,7 @@ const parseJson = (raw: string): unknown => {
   }
 }
 
-/**
- * One gateway reply, reduced to a `CalculationOutcome`. Every reply classifies:
- * a 200 result, a relayed domain error, the rewritten outage, or the
- * unexpected envelope — nothing rejects (spec.md, "Error contract").
- */
+/** Reduces one gateway reply to a `CalculationOutcome`; every reply classifies, nothing rejects (spec.md, "Error contract"). */
 const classify = (status: number, body: unknown): CalculationOutcome => {
   if (status === 200) {
     const parsed = calculateResponseSchema.safeParse(body)
@@ -93,8 +89,6 @@ export const createCalculateClient = ({ gatewayUrl, fetch = globalThis.fetch }: 
   const url = `${gatewayUrl}/api/v1/calculate`
 
   return async (request) => {
-    // Never rejects: a thrown fetch is the network-failure outcome, and every
-    // reply — whatever it carries — classifies into an outcome below.
     try {
       const response = await fetch(url, {
         method: 'POST',

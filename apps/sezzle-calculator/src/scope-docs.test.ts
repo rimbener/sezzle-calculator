@@ -63,7 +63,7 @@ describe('AGENTS.md names every workspace with a test suite', () => {
   })
 })
 
-// AC-15's docs half: the SPA calls the gateway now; AGENTS.md's opening paragraph must say so.
+// AC-15's docs half: the SPA calls the gateway, so AGENTS.md's opening paragraph must say so.
 describe('AGENTS.md says the SPA calls the gateway through the client and hook (AC-15)', () => {
   const agents = readFileSync(resolve(__dirname, '../../../AGENTS.md'), 'utf8')
 
@@ -103,7 +103,7 @@ describe('the app README describes what the calculator does today', () => {
     expect(readme).not.toMatch(/not (yet )?wired/i)
   })
 
-  // `=` reaches the real gateway now; the README must describe the pieces that make it so (AC-14).
+  // `=` reaches the real gateway; the README must say how (AC-14).
   it('describes the client module and the hook that carry `=` to the gateway', () => {
     expect(readme).toMatch(/`=`/)
     expect(readme).toMatch(/src\/api\/client\.ts/)
