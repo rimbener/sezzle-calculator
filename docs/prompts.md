@@ -261,3 +261,9 @@ Session started through awc (agentic-workflow-creator), which loaded the `workfl
 > yes, and add to .gitignore whatever you need
 
 **Result:** Wrote the package: `workflows/prd-to-spec/` (`prd-to-spec.yaml`, `README.md`, verbatim `running.md`, agents `workflow_lead`, `story_partner` trimmed to capture-and-confirm, `spec_partner`, `spec_reviewer`, `text_shrinker` trimmed to shrink-spec, authored `committer`; scripts `finish-task.sh`, `write-verdict-file.sh`), the three launchers `.claude/commands/prd-to-spec.md`, `.codex/skills/prd-to-spec/SKILL.md`, `.opencode/command/prd-to-spec.md`, and added `.awc-tmp/` to `.gitignore`. Validated YAML structure, verbatim copies, placeholders and launcher slots.
+
+## 17. Phase plan for the spec runs
+
+> I'll use @workflows/prd-to-spec/prd-to-spec.yaml to define the specs for @docs/PRD-P0.md , but I want to do it in phases, plan the order of those phases and create a md file with the prompts to run each of them
+
+**Result:** Wrote `docs/spec-phases.md` — four `prd-to-spec` runs following PRD §11 (`p1-contract-calc-service`, `p2-api-gateway`, `p3-calculator-ui`, `p4-quality-and-docs`), each with its exact `/prd-to-spec` launch line, in/out of scope, and the decisions to have ready for the two interviews; plus the grouping rationale (XC-1 rides with phase 1, the six requirements split by service half, tests stay in their phase) and the resume/halt notes.
