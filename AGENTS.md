@@ -38,7 +38,7 @@ Node >= 24 is pinned via `engines` in the root `package.json`. `devEngines.packa
 - Turbo rejects a `devEngines.packageManager.version` range spanning more than one major (`>=10` fails with `invalid_dev_engines_package_manager_field`), so the range cannot be left open.
 - `^11.0.0` is the major that stock Node 24 ships, matching `engines.node`. On an older npm every command prints an `EBADDEVENGINES` warning — that is the warning working as intended, not a misconfiguration; the fix is Node 24.
 
-Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`); `packages/contracts/src/*.test.ts` and `apps/calc-service/src/**/*.test.ts` are the suites so far, and `apps/sezzle-calculator` and `packages/ui` still have none. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
+Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`), with `test:watch` (`vitest watch`) as the persistent watch-mode counterpart; `packages/contracts/src/*.test.ts` and `apps/calc-service/src/**/*.test.ts` are the suites so far, and `apps/sezzle-calculator` and `packages/ui` still have none. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
 
 ## Monorepo layout
 

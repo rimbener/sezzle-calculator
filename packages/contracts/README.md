@@ -15,3 +15,9 @@ Run its tests with:
 ```sh
 npx turbo test --filter=@repo/contracts
 ```
+
+Or re-run them on every save:
+
+```sh
+npx turbo test:watch --filter=@repo/contracts
+```

@@ -5,6 +5,10 @@ import { CalculationError } from "../calculation-error.ts";
 import { divide } from "./divide.ts";
 
 describe("divide (AC-6, AC-7)", () => {
+  it("divides to a integer result", () => {
+    expect(divide(14, 2)).toBe(7);
+  });
+
   it("divides to a decimal result", () => {
     expect(divide(7, 2)).toBe(3.5);
   });

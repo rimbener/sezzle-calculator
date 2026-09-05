@@ -7,7 +7,8 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch"
   },
   "devDependencies": {
     "prettier": "3.9.6",
@@ -20,12 +21,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "devEngines": {
-    "packageManager": {
-      "name": "npm",
-      "version": "^11.0.0",
-      "onFail": "warn"
-    }
-  }
+  ]
 }

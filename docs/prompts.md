@@ -377,3 +377,9 @@ Session started through awc (agentic-workflow-creator), which loaded the `workfl
 > split phase 3 into 2 different phases: one that is only UI+Input state machine, and one that connects with the API
 
 **Result:** Rewrote `docs/spec-phases.md` as five `prd-to-spec` runs instead of four — phase 3 (`p3-calculator-ui`: FE-1, FE-3, Open Question 5, UI half of FE-8, no `fetch`) now emits a calculation request and consumes an outcome, phase 4 (`p4-calculator-api-client`: FE-2, FE-4, FE-5, FE-7, network half of FE-8) adds the typed client, hook, busy state and the four error presentations, and the old phase 4 became phase 5 (`p5-quality-and-docs`). Updated the order table's dependency column, added a rationale bullet for the network-boundary split, and left `docs/PRD-P0.md` §11 unchanged with a note in the intro.
+
+From now on, I ran the workflows in the following order:
+
+/prd-to-spec p1-contract-calc-service XC-1, XC-3, BE-4, BE-5, BE-8 + calc-service half of BE-1, BE-3, BE-9, BE-11: shared contract package and calc-service
+
+./spec-to-code.sh p1-contract-calc-service claude

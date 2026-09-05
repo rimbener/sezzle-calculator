@@ -64,3 +64,9 @@ Run its tests with:
 ```sh
 npx turbo test --filter=calc-service
 ```
+
+Or re-run them on every save:
+
+```sh
+npx turbo test:watch --filter=calc-service
+```
