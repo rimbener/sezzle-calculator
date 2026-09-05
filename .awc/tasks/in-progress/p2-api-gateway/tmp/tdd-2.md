@@ -45,3 +45,5 @@ Docs landed in this slice: `AGENTS.md`'s three statements slice 2 falsifies — 
 12. Pin: a signal-honouring fetch (rejects with `AbortError` on abort) reads as timeout with no retry — green on arrival, but only because `onAbort().then(expired)` won the microtask race against the rejection climbing two `await`s into the catch. Refactor on green: the catch checks `controller.signal.aborted` before counting a refusal, so the reading is explicit. Suite still green.
 13. Pin (green on arrival): deadline mid-attempt-2 → unreachable, two calls, settled at exactly 150 ms.
 14. Prettier over the workspace; `AGENTS.md`'s three statements; workspace lint / check-types / test green; subtask-3 → done. Root gate.
+
+closing-commit: 9855703
