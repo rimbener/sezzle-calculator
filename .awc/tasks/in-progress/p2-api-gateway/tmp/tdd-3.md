@@ -44,3 +44,5 @@ Docs landed in this slice: `apps/api-gateway/README.md` (new); `AGENTS.md` § Wh
 10. Pin AC-12 structural: `no-arithmetic.test.ts`. Prettier over `app.test.ts`. subtask-4 → done, subtask-5 → in_progress.
 11. RED `server.test.ts` AC-18 (module missing) → GREEN `server.ts` — `start(env)` resolving config, building the real client on the global `fetch`, `createApp`, `serve`; `import.meta.main` announce — and the `dev`/`start` scripts in `package.json` that point at it. Server suite 475 ms: the 502 cases settle on the second refused connection, not the deadline.
 12. Docs: `README.md`, `AGENTS.md`; Prettier; `turbo run dev --dry-run=json` lists both services' dev tasks; subtask-5 → done. Root gate.
+
+closing-commit: 9afe3d9
