@@ -357,3 +357,17 @@ Session started through awc (agentic-workflow-creator), which loaded the `workfl
 > yes, go with open-task as node 1
 
 **Result:** Wrote `workflows/spec-to-code/` (`spec-to-code.yaml`, `README.md`, verbatim `running.md` and `workflow_lead.md`, tailored `implementer_tdd`, `reviewer_slice`, `reviewer_engineering`, `text_shrinker`, `dod_validator`, copied `committer`; scripts `open-task.sh`, `finish-task.sh`, `write-verdict-file.sh`), the worktree launcher `spec-to-code.sh` with `agents-cli.conf`, and the three launchers under `.claude/commands/`, `.codex/skills/spec-to-code/`, `.opencode/command/`. Added the Vitest + Testing Library harness (`test`/`check-types` scripts, `turbo.json` `test` task, jsdom setup files in the app and `@repo/ui`) and ran the gate green. Validated YAML, verbatim copies, trail scripts; committed as three commits on `main`.
+
+## 19. Workflow review: two rounds over both packages
+
+### 19.1
+
+> run 2 rounds of review and fixes over the @workflows/
+
+**Result:** Reviewed `workflows/prd-to-spec/` and `workflows/spec-to-code/` against the workflow-creator checklist twice. Added a `commit-open` committer node after `open-task` in `spec-to-code.yaml` (README commit table and node walkthrough renumbered) and cleaned trim residue in `workflows/prd-to-spec/agents/text_shrinker.md`. Flagged the hand-edited `complete` line in prd-to-spec's `workflow_lead.md`, the app's non-strict lint script, and Node 22 versus the pinned Node 24.
+
+### 19.2
+
+> change prd-to-spec complete with .awc/tasks/spec-ready/<task>/. fix lint. Ill update node
+
+**Result:** `workflows/prd-to-spec/agents/workflow_lead.md`'s `complete ->` line now names `.awc/tasks/spec-ready/<task>/`; `apps/sezzle-calculator/package.json` lint became `eslint . --max-warnings 0`, verified green with an uncached Turbo run.
