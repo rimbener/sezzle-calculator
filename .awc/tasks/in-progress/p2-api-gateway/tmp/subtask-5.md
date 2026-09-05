@@ -2,7 +2,7 @@
 
 - **slice:** 3 — the public surface
 - **criteria:** AC-18, AC-19, AC-20
-- **status:** todo
+- **status:** done
 - **paths:** `apps/api-gateway/src/server.ts`, `apps/api-gateway/src/server.test.ts`, `apps/api-gateway/README.md`, `apps/api-gateway/package.json`, `AGENTS.md`
 
 `src/server.ts` mirrors calc-service's: a `start(env)` that serves the app through `@hono/node-server` on the resolved port and resolves to the bound port plus a `close()`, with the entry-point block guarded by `import.meta.main` so importing binds nothing. The real client is built here from the resolved config and global `fetch` — the one place production wiring is assembled, and the only module with no injection seam of its own (AC-18). `package.json` gains its two entry-point scripts here, with the file they point at: `dev` is `node --watch src/server.ts` and `start` is `node src/server.ts`, as calc-service's are (subtask-2 says why they were held back).

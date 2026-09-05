@@ -2,7 +2,7 @@
 
 - **slice:** 3 — the public surface
 - **criteria:** AC-11, AC-12, AC-13, AC-14, AC-15, AC-21, AC-16, AC-17
-- **status:** todo
+- **status:** done
 - **paths:** `apps/api-gateway/src/app.ts`, `apps/api-gateway/src/app.test.ts`, `apps/api-gateway/src/no-arithmetic.test.ts`
 
 `createApp` takes the client as a dependency and exports a ready-made `app` beside it, as calc-service does, so tests drive it through `app.fetch` with no port bound.
