@@ -2,7 +2,7 @@
 
 - **slice:** 1 — the contract
 - **criteria:** AC-4, AC-5
-- **status:** todo
+- **status:** done
 - **paths:** `packages/contracts/package.json`, `packages/contracts/tsconfig.json`, `packages/contracts/eslint.config.mjs`, `packages/contracts/vitest.config.ts`, `packages/contracts/src/index.ts`, `packages/contracts/README.md`, `turbo.json`, `package-lock.json`
 
 Stand up the workspace the rest of slice 1 fills in. Private package named `@repo/contracts`, `"type": "module"`, `exports` pointing `.` at `./src/index.ts` with no build step — the `@repo/ui` pattern. Scripts match the existing workspaces: `lint` (`eslint . --max-warnings 0`), `check-types` (`tsc --noEmit`), `test` (`vitest run --passWithNoTests`). Dependencies: `zod`. Dev dependencies mirroring `@repo/ui`'s: `@repo/eslint-config`, `@repo/typescript-config`, `eslint`, `typescript`, `vitest`.

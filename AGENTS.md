@@ -4,7 +4,7 @@ This file provides guidance to Agents like Claude Code (claude.ai/code) when wor
 
 ## What this is
 
-A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`, mostly **not yet built**) is a React SPA plus two backend microservices. Today only the frontend app and the shared UI package exist.
+A coding-assessment project: a calculator web app. The target architecture (documented in `docs/PRD-P0.md`, mostly **not yet built**) is a React SPA plus two backend microservices. Today the frontend app, the shared UI package and the shared contract package (`@repo/contracts`) exist; neither service is built yet.
 
 `docs/` is the source of truth for scope and is worth reading before non-trivial work:
 
@@ -32,9 +32,13 @@ npx turbo dev --filter=sezzle-calculator
 npx turbo lint --filter=@repo/ui
 ```
 
-Node >= 24 and npm 10.9.4 are pinned in the root `package.json`.
+Node >= 24 is pinned via `engines` in the root `package.json`. `devEngines.packageManager` declares npm `^11.0.0` with `onFail: "warn"`. Turborepo 2 refuses to resolve the workspace without a package-manager declaration (`dangerouslyDisablePackageManagerCheck` drops the workspaces on 2.10.12), so one of the two forms has to be there. Notes on the choice, so it is not "fixed" by accident:
 
-Tests: none exist yet. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — set it up that way rather than introducing Jest.
+- `devEngines` is npm's own advisory field and `onFail: "warn"` keeps a mismatch from hard-failing `npm install`. Prefer it over the legacy `"packageManager"` field, which is Corepack's contract: wherever Corepack is enabled it becomes a hard pin that downloads and switches to that exact npm, with no `onFail` escape hatch.
+- Turbo rejects a `devEngines.packageManager.version` range spanning more than one major (`>=10` fails with `invalid_dev_engines_package_manager_field`), so the range cannot be left open.
+- `^11.0.0` is the major that stock Node 24 ships, matching `engines.node`. On an older npm every command prints an `EBADDEVENGINES` warning — that is the warning working as intended, not a misconfiguration; the fix is Node 24.
+
+Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`); `packages/contracts/src/*.test.ts` is the first suite, and `apps/sezzle-calculator` and `packages/ui` still have none. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
 
 ## Monorepo layout
 
@@ -42,12 +46,12 @@ npm workspaces (`apps/*`, `packages/*`) orchestrated by Turborepo.
 
 - `apps/sezzle-calculator` — Vite 8 + React 19 SPA. The React Compiler is enabled via `@rolldown/plugin-babel` + `reactCompilerPreset` in `vite.config.ts`; do not hand-write `useMemo`/`useCallback` that the compiler already covers.
 - `packages/ui` (`@repo/ui`) — the design-system component library.
+- `packages/contracts` (`@repo/contracts`) — the shared calculate-API contract: the seven operation names and their operand counts, the Zod request schema, the `{ result }` and `{ error: { code, message } }` shapes, the five error codes and every error message string. Consumed as source with no build step; see its README.
 - `packages/eslint-config` (`@repo/eslint-config`), `packages/typescript-config` (`@repo/typescript-config`) — shared configs consumed via `extends`.
 
-Two known rough edges to be aware of rather than "fix" by accident:
+One known rough edge to be aware of rather than "fix" by accident:
 
-- `apps/sezzle-calculator` uses its **own** flat ESLint config (`@stylistic` recommended: no semicolons, single quotes) and does **not** extend `@repo/eslint-config`. `packages/ui` does extend it (Prettier-compatible, semicolons, double quotes). Match the file you are editing.
-- The app has no `check-types` script, so the root `check-types` task only covers `@repo/ui`. `turbo.json` `build.outputs` is still the Next.js default (`.next/**`) and does not cache Vite's `dist/`.
+- `apps/sezzle-calculator` uses its **own** flat ESLint config (`@stylistic` recommended: no semicolons, single quotes) and does **not** extend `@repo/eslint-config`. `packages/ui` and `packages/contracts` do extend it (Prettier-compatible, semicolons, double quotes). Match the file you are editing.
 
 ## @repo/ui
 

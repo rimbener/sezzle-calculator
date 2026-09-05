@@ -2,7 +2,7 @@
 
 - **slice:** 1 — the contract
 - **criteria:** AC-1, AC-2, AC-3
-- **status:** todo
+- **status:** done
 - **paths:** `packages/contracts/src/index.ts`, `packages/contracts/src/operations.ts`, `packages/contracts/src/calculate.ts`, `packages/contracts/src/errors.ts`, `packages/contracts/src/messages.ts`, `packages/contracts/src/*.test.ts`
 
 The whole contract, defined once (AC-3):

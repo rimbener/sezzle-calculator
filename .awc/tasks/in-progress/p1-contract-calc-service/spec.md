@@ -16,6 +16,7 @@ Define the request/response contract once in a new workspace package, and build 
 | `apps/calc-service` | new — pure operation modules, operation registry, Hono app, server entry, tests, README |
 | `turbo.json` | `build.outputs` corrected from the Next.js leftover `.next/**` to `dist/**` (behaviour-preserving; see subtask-1) |
 | root `package-lock.json` | new workspaces and their dependencies |
+| root `package.json` | `devEngines.packageManager` `{ npm ^11.0.0, onFail: warn }` restored — Turborepo 2 needs a package-manager declaration to resolve the workspace and `240d074` had removed it; ratified by the human in review-slice-1 F-2, rationale in `AGENTS.md` § Commands |
 
 Not touched: the root `README.md`, `.nvmrc` (both XC-2's), `apps/sezzle-calculator`, `packages/ui`, `packages/eslint-config`, `packages/typescript-config`.
 
