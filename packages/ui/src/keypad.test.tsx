@@ -79,3 +79,23 @@ describe("Keypad purity", () => {
     expect(source).not.toMatch(/@repo\/contracts/);
   });
 });
+
+describe("keys meet the 44px touch floor at any width, 360px included (AC-2)", () => {
+  const css = readFileSync(resolve(__dirname, "styles/components.css"), "utf8");
+  const sectionAfter = (marker: string) => css.split(new RegExp(`/\\* ---- ${marker} ---- \\*/`))[1]?.split(/\/\* ---- /)[0] ?? "";
+  const key = sectionAfter("Key").match(/\.sc-key\s*\{([^}]*)\}/)?.[1] ?? "";
+  const pad = sectionAfter("Keypad").match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? "";
+  const spacing = readFileSync(resolve(__dirname, "styles/tokens/spacing.css"), "utf8");
+  const token = (name: string) => Number(spacing.match(new RegExp(`--${name}:\\s*([\\d.]+)px`))?.[1]);
+
+  it("sizes the key itself no smaller than --tap-min in both dimensions", () => {
+    expect(key).toMatch(/min-height:\s*var\(--key-size\)/);
+    expect(key).toMatch(/min-width:\s*var\(--tap-min\)/);
+    expect(token("key-size")).toBeGreaterThanOrEqual(token("tap-min"));
+  });
+
+  it("never lets a grid column drop below --key-size-sm, which clears the floor too", () => {
+    expect(pad).toMatch(/grid-template-columns:\s*repeat\(4,\s*minmax\(var\(--key-size-sm\), 1fr\)\)/);
+    expect(token("key-size-sm")).toBeGreaterThanOrEqual(token("tap-min"));
+  });
+});

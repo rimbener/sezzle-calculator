@@ -4,7 +4,7 @@
 - **title:** 360px shell and fit-to-view readout
 - **slice:** A — responsive pass
 - **criteria:** AC-1, AC-2, AC-3, AC-4, AC-5, AC-10
-- **status:** todo
+- **status:** done
 - **paths:**
   - `packages/ui/src/display.tsx`
   - `packages/ui/src/styles/components.css`

@@ -233,3 +233,24 @@ describe('App shell styles', () => {
     expect(css).not.toMatch(/\d+px/)
   })
 })
+
+describe('App shell styles — the 360px floor (AC-1)', () => {
+  const css = readFileSync(resolve(__dirname, 'App.css'), 'utf8')
+  const shell = css.match(/\.calculator\s*\{([^}]*)\}/)?.[1] ?? ''
+  const spacing = readFileSync(resolve(__dirname, '../../../packages/ui/src/styles/tokens/spacing.css'), 'utf8')
+  const keypad = readFileSync(resolve(__dirname, '../../../packages/ui/src/styles/components.css'), 'utf8')
+    .split('/* ---- Keypad ---- */')[1]?.split('/* ---- ')[0] ?? ''
+  const token = (name: string) => Number(spacing.match(new RegExp(`--${name}:\\s*([\\d.]+)px`))?.[1])
+  const pad = keypad.match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? ''
+
+  it('the keypad, the widest fixed child, fits the viewport at 360, so nothing scrolls horizontally', () => {
+    expect(shell).toMatch(/padding:\s*0 var\(--space-4\)/)
+    expect(pad).toMatch(/grid-template-columns:\s*repeat\(4,\s*minmax\(var\(--key-size-sm\), 1fr\)\)/)
+    expect(pad).toMatch(/gap:\s*var\(--space-3\)/)
+    expect(pad).toMatch(/padding:\s*var\(--space-5\)/)
+    expect(pad).toMatch(/border:\s*var\(--border-2\) solid/)
+    // Four columns at their 48px floor + three gaps + the pad's padding and border, inside the shell's side padding.
+    const padWidth = 4 * token('key-size-sm') + 3 * token('space-3') + 2 * token('space-5') + 2 * token('border-2')
+    expect(padWidth + 2 * token('space-4')).toBeLessThanOrEqual(360)
+  })
+})

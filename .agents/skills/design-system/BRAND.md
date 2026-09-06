@@ -45,7 +45,7 @@ All three from Google Fonts.
 
 Families: `--font-display` (Space Mono), `--font-body` (Archivo), `--font-lcd` (Share Tech Mono), `--font-mono` (Space Mono).
 
-Sizes `--text-2xs` → `--text-4xl`: 11 · 12 · 14 · 16 · 19 · 23 · 30 · 40 · 56, plus `--text-readout-sm|md|lg` at 28 · 44 · 60. Headings track `--tracking-tight` (-0.01em); uppercase labels `--tracking-widest` (+0.16em) at 11–12px.
+Sizes `--text-2xs` → `--text-4xl`: 11 · 12 · 14 · 16 · 19 · 23 · 30 · 40 · 56, plus `--text-readout-sm|md|lg` at 28 · 44 · 60 and `--text-readout-2xs` at 8 — the readout fit ladder's floor. Headings track `--tracking-tight` (-0.01em); uppercase labels `--tracking-widest` (+0.16em) at 11–12px.
 
 Composite roles set font in one declaration: `--type-h1`, `--type-h2`, `--type-body`, `--type-small`, `--type-label`, `--type-key`, `--type-readout`. Use `font: var(--type-key)` rather than assembling family, weight and size by hand.
 
