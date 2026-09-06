@@ -2,23 +2,11 @@ import {
   calculateResponseSchema,
   ERROR_CODES,
   errorResponseSchema,
-  type CalculateRequest,
   type ErrorCode,
 } from '@repo/contracts'
 import type { CalculationOutcome } from '../calculator/state'
-
-/** The env var holding the gateway's base URL; Vite exposes `VITE_`-prefixed variables to client code. */
-export const GATEWAY_URL_VARIABLE = 'VITE_GATEWAY_URL'
-
-/** The dev gateway: the api-gateway's own default port. */
-export const DEFAULT_GATEWAY_URL = 'http://localhost:3000'
-
-/** `env[name]`, or the dev default when the variable is unset. */
-export const resolveGatewayUrl = (env: Readonly<Record<string, string | undefined>>): string =>
-  env[GATEWAY_URL_VARIABLE] ?? DEFAULT_GATEWAY_URL
-
-/** The codes the gateway answers 422 with — calc-service's math rejections, relayed unchanged. */
-export type DomainErrorCode = Extract<ErrorCode, 'DIVISION_BY_ZERO' | 'NEGATIVE_SQRT' | 'RESULT_NOT_FINITE'>
+import { NETWORK_MESSAGE, OUTAGE_MESSAGE, UNEXPECTED_MESSAGE } from './client.constants'
+import type { CalculateClient, CreateCalculateClientOptions, DomainErrorCode } from './client.types'
 
 const DOMAIN_ERROR_CODES: ReadonlySet<ErrorCode> = new Set<DomainErrorCode>([
   ERROR_CODES.DIVISION_BY_ZERO,
@@ -35,28 +23,6 @@ const isServiceUnavailable = (body: unknown): boolean => {
   return parsed.success
     && parsed.data.error.code === ERROR_CODES.SERVICE_UNAVAILABLE
 }
-
-/** The end-user wording for a 502/504 outage (FE-4's quote) — never the gateway's raw wording. */
-export const OUTAGE_MESSAGE = 'Calculations are temporarily unavailable — try again.'
-
-/** `fetch` itself threw — the gateway is unreachable (UC-8's own quote). */
-export const NETWORK_MESSAGE = 'Can\'t reach the calculation service — try again.'
-
-/** For a reply matching none of the documented shapes. */
-export const UNEXPECTED_MESSAGE = 'Something went wrong — try again.'
-
-/** The slice of `fetch` the client needs; tests pass a fake. */
-export type FetchLike = (url: string, init: RequestInit) => Promise<Response>
-
-export type CreateCalculateClientOptions = {
-  /** The gateway's base URL; `/api/v1/calculate` is joined onto it. */
-  gatewayUrl: string
-  /** Defaults to the global `fetch`. */
-  fetch?: FetchLike
-}
-
-/** Never rejects — `Calculator`'s `onRequest` contract. */
-export type CalculateClient = (request: CalculateRequest) => Promise<CalculationOutcome>
 
 /** The reply body parsed, or `undefined` when it is not JSON. */
 const parseJson = (raw: string): unknown => {

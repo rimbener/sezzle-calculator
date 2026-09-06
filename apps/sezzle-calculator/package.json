@@ -9,6 +9,7 @@
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc -b",
     "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest watch",
     "preview": "vite preview"
   },
   "dependencies": {

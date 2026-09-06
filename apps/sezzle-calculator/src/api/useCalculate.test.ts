@@ -2,7 +2,8 @@ import type { CalculateRequest } from '@repo/contracts'
 import { renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { CalculatorProps } from '../calculator/Calculator'
-import { DEFAULT_GATEWAY_URL, type FetchLike } from './client'
+import { DEFAULT_GATEWAY_URL } from './client.constants'
+import type { FetchLike } from './client.types'
 import { useCalculate } from './useCalculate'
 
 const REQUEST: CalculateRequest = { operation: 'add', operands: [1, 2] }

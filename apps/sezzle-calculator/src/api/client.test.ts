@@ -5,16 +5,9 @@ import {
   type CalculateRequest,
 } from '@repo/contracts'
 import { describe, expect, it, vi } from 'vitest'
-import {
-  DEFAULT_GATEWAY_URL,
-  GATEWAY_URL_VARIABLE,
-  NETWORK_MESSAGE,
-  OUTAGE_MESSAGE,
-  UNEXPECTED_MESSAGE,
-  createCalculateClient,
-  resolveGatewayUrl,
-  type FetchLike,
-} from './client'
+import { createCalculateClient } from './client'
+import { OUTAGE_MESSAGE, NETWORK_MESSAGE, UNEXPECTED_MESSAGE, DEFAULT_GATEWAY_URL, resolveGatewayUrl, GATEWAY_URL_VARIABLE } from './client.constants'
+import type { FetchLike } from './client.types'
 
 const REQUEST: CalculateRequest = { operation: 'add', operands: [1, 2] }
 
