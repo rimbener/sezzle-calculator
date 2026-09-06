@@ -30,3 +30,7 @@
 | UC-4 sqrt in UI | `144`, `√` → fired immediately, curl equivalent verified on :3001 |
 
 All exercisable under the 10-minute budget, no undocumented steps.
+
+Fix step (review-slice-2, zero findings — nothing to fix; the slice's uncommitted build work committed as its own commit):
+
+closing-commit: c3bf61c
