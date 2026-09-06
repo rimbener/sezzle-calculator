@@ -4,7 +4,7 @@
 - **title:** Root README and .nvmrc
 - **slice:** B — README
 - **criteria:** AC-6, AC-7, AC-8
-- **status:** todo
+- **status:** done
 - **paths:**
   - `README.md` (root — replaces the stock Turborepo starter)
   - `.nvmrc` (new, repo root)
