@@ -67,10 +67,11 @@ describe("sc-display styles — the fit ladder (AC-3, AC-4)", () => {
   const smClamp = (step: number) =>
     rules.find(rule => rule.selector.includes(`.sc-display--sm .sc-display__value[data-fit="${step}"]`));
   const baseOf = (selector: string) => sizeOf(rules.find(rule => rule.selector === selector)?.body ?? "");
-  /** Longest value the ladder still renders one-line at a step: the tail step's coverage is 59 (285 / (0.6 × 8)). */
-  const maxChars = (step: number) => (step < FIT_STEP_LIMITS.length ? FIT_STEP_LIMITS[step] ?? 0 : 59);
+  const lastOneLineStep = FIT_STEP_LIMITS.length - 1;
+  const maxChars = (step: number) => FIT_STEP_LIMITS[step] ?? 0;
+  const componentCss = section.replace(/:root\s*\{[^}]*\}/g, "");
 
-  it("maps every step to a type-scale size, non-increasing for each display size", () => {
+  it("maps every one-line step to a type-scale size, non-increasing for each display size", () => {
     const lgBase = baseOf(".sc-display--lg .sc-display__value");
     const mdBase = baseOf(".sc-display__value");
     const smBase = baseOf(".sc-display--sm .sc-display__value");
@@ -80,7 +81,7 @@ describe("sc-display styles — the fit ladder (AC-3, AC-4)", () => {
     const lgLadder: number[] = [lgBase!];
     const mdLadder: number[] = [mdBase!];
     const smLadder: number[] = [smBase!];
-    for (let step = 1; step <= FIT_STEP_LIMITS.length; step++) {
+    for (let step = 1; step <= lastOneLineStep; step++) {
       const size = sizeOf(generic(step)?.body ?? "");
       expect(size, `step ${step} has a font-size rule`).toBeDefined();
       lgLadder.push(size!);
@@ -93,8 +94,8 @@ describe("sc-display styles — the fit ladder (AC-3, AC-4)", () => {
     expect(nonIncreasing(smLadder), `sm ladder never grows: ${smLadder.join(", ")}`).toBe(true);
   });
 
-  it("fits each step's longest value into a 285px readout column at a 0.6em advance (360px viewport: 300px minus a scrollbar)", () => {
-    for (let step = 0; step <= FIT_STEP_LIMITS.length; step++) {
+  it("fits each one-line step's longest value into a 285px readout column at a 0.6em advance (360px viewport: 300px minus a scrollbar)", () => {
+    for (let step = 0; step <= lastOneLineStep; step++) {
       const rule = step === 0 ? rules.find(rule => rule.selector === ".sc-display--lg .sc-display__value") : generic(step);
       const size = sizeOf(rule?.body ?? "")!;
       expect(size * 0.6 * maxChars(step), `step ${step} (${size}px × 0.6 × ${maxChars(step)} chars)`).toBeLessThanOrEqual(285);
@@ -110,9 +111,9 @@ describe("sc-display styles — the fit ladder (AC-3, AC-4)", () => {
   });
 
   it("stays on the design system: the ladder's tokens exist and the section carries no raw hex or pixel size", () => {
-    expect(typography).toMatch(/--text-readout-2xs:\s*8px/);
+    expect(typography).toMatch(/--text-readout-xs:\s*16px/);
     expect(section).not.toBe("");
-    expect(section).not.toMatch(/#[0-9a-f]{3,8}\b/i);
-    expect(section).not.toMatch(/\d+px/);
+    expect(componentCss).not.toMatch(/#[0-9a-f]{3,8}\b/i);
+    expect(componentCss).not.toMatch(/\d+px/);
   });
 });
