@@ -51,7 +51,7 @@ describe("Display — the readout contract stays as phases 3–4 shipped it (AC-
 });
 
 describe("sc-display styles — the fit ladder (AC-3, AC-4)", () => {
-  const css = readFileSync(resolve(__dirname, "styles/components.css"), "utf8");
+  const css = readFileSync(resolve(__dirname, "styles/components/display.css"), "utf8");
   const typography = readFileSync(resolve(__dirname, "styles/tokens/typography.css"), "utf8");
   const section = css.split("/* ---- Display ---- */")[1]?.split("/* ---- ")[0] ?? "";
   const rules = (section.replace(/\/\*[\s\S]*?\*\//g, "").match(/[^{}]+\{[^}]*\}/g) ?? []).map(block => {

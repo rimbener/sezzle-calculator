@@ -228,6 +228,13 @@ describe('App shell styles', () => {
     expect(shell).toMatch(/margin(-inline)?:.*auto/)
   })
 
+  it('carries the panel chrome the Keypad shed: shell surface, hard edge, offset shadow', () => {
+    expect(shell).toMatch(/background:\s*var\(--surface-shell\)/)
+    expect(shell).toMatch(/border:\s*var\(--border-2\) solid var\(--border-strong\)/)
+    expect(shell).toMatch(/box-shadow:\s*var\(--shadow-panel\)/)
+    expect(shell).toMatch(/border-radius:\s*var\(--radius-lg\)/)
+  })
+
   it('uses only design-system custom properties: no raw hex value, no raw pixel size', () => {
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)
     expect(css).not.toMatch(/\d+px/)
@@ -243,13 +250,12 @@ describe('App shell styles — the 360px floor (AC-1)', () => {
   const pad = keypad.match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? ''
 
   it('the keypad, the widest fixed child, fits the viewport at 360, so nothing scrolls horizontally', () => {
-    expect(shell).toMatch(/padding:\s*0 var\(--space-4\)/)
+    expect(shell).toMatch(/padding:\s*var\(--space-5\)/)
+    expect(shell).toMatch(/border:\s*var\(--border-2\) solid/)
     expect(pad).toMatch(/grid-template-columns:\s*repeat\(4,\s*minmax\(var\(--key-size-sm\), 1fr\)\)/)
     expect(pad).toMatch(/gap:\s*var\(--space-3\)/)
-    expect(pad).toMatch(/padding:\s*var\(--space-5\)/)
-    expect(pad).toMatch(/border:\s*var\(--border-2\) solid/)
-    // Four columns at their 48px floor + three gaps + the pad's padding and border, inside the shell's side padding.
-    const padWidth = 4 * token('key-size-sm') + 3 * token('space-3') + 2 * token('space-5') + 2 * token('border-2')
-    expect(padWidth + 2 * token('space-4')).toBeLessThanOrEqual(360)
+    // Four columns at their 48px floor + three gaps, inside the shell's --space-5 padding and --border-2 edge.
+    const padWidth = 4 * token('key-size-sm') + 3 * token('space-3')
+    expect(padWidth + 2 * token('space-5') + 2 * token('border-2')).toBeLessThanOrEqual(360)
   })
 })

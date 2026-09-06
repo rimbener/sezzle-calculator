@@ -45,10 +45,9 @@ describe("sc-keypad styles", () => {
   const section = readFileSync(resolve(__dirname, "styles/components/keypad.css"), "utf8");
   const pad = section.match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? "";
 
-  it("lays the pad out as a grid with the standard hard border and offset panel shadow", () => {
+  it("lays the pad out as a bare grid — the panel chrome (edge, shadow, surface) is the shell's job", () => {
     expect(pad).toMatch(/display:\s*grid/);
-    expect(pad).toMatch(/border:\s*var\(--border-2\) solid var\(--border-strong\)/);
-    expect(pad).toMatch(/box-shadow:\s*var\(--shadow-panel\)/);
+    expect(pad).toMatch(/gap:\s*var\(--space-3\)/);
   });
 
   it("uses only design-system custom properties: no raw hex value, no raw pixel size", () => {
