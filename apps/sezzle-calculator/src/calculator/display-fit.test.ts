@@ -4,10 +4,7 @@ import { readoutFitStep } from '@repo/ui/display'
 import { NETWORK_MESSAGE, OUTAGE_MESSAGE, UNEXPECTED_MESSAGE } from '../api/client.constants'
 import { OPERAND_MAX_LENGTH } from './reducer'
 
-// AC-3's coverage: every value the calculator can put on the readout must land on the
-// fit ladder's last step or earlier. The ladder's CSS (pinned in @repo/ui's
-// display.test.tsx) sizes each step to fit a 285px column at a 360px viewport, and its
-// tail step covers 59 characters one line, wrapping beyond.
+// The ladder's CSS is pinned in @repo/ui's display.test.tsx; its tail step wraps past 59 characters.
 describe('every producible readout value lands on the fit ladder (AC-3)', () => {
   const longestNumberString = String(-Number.MAX_VALUE)
   const values = [

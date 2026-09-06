@@ -128,8 +128,7 @@ describe('the app README describes what the calculator does today', () => {
   })
 })
 
-// XC-3's percentage definition lives in `apps/calc-service/README.md`; the spec's
-// non-goals let the root README's operation table keep the phrase and reference it, not restate it.
+// XC-3's percentage definition lives in apps/calc-service/README.md; the README references it rather than restating it.
 describe('the root README references XC-3, not restates it', () => {
   const readme = readFileSync(resolve(__dirname, '../../../README.md'), 'utf8')
   const percentageRow = line(readme, '| `percentage` |')

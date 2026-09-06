@@ -2,8 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-// AC-10: no accessibility tooling is added — no axe or Lighthouse dependency in any
-// workspace. Every workspace's package.json is scanned so none grows one.
+// Every workspace's package.json is scanned so none grows an axe or Lighthouse dependency.
 const ROOT = join(__dirname, '..', '..', '..')
 const FORBIDDEN = /\b(axe|lighthouse)/i
 const SECTIONS = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']

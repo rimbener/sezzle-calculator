@@ -4,11 +4,9 @@ import type { HTMLAttributes, ReactNode } from "react";
 export type DisplayState = "idle" | "busy" | "error";
 
 /**
- * Longest value, in characters, that each fit step still renders at full width at a
- * 360px viewport (AC-3, AC-4): sized for a 285px readout column (300px minus a
- * scrollbar) and a 0.6em advance, the widest of Share Tech Mono's 0.54em and its
- * monospace fallbacks. The CSS ladder maps each step to the next smaller type-scale
- * size; `components.css` carries the arithmetic.
+ * Longest value, in characters, each fit step still renders one line at a 360px viewport: a
+ * 285px readout column (300px minus a scrollbar) at a 0.6em advance. The CSS ladder in
+ * `components.css` maps each step to the next smaller type-scale size.
  */
 export const FIT_STEP_LIMITS: readonly number[] = [7, 10, 15, 16, 20, 25, 29, 33, 39, 43];
 

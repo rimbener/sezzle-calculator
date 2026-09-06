@@ -330,10 +330,9 @@
   font-size: var(--text-readout-lg)
 }
 
-/* Fit ladder: the value element carries data-fit from its length (see readoutFitStep); each
-   step is the next smaller type-scale size. Sizing never truncates — past the ladder's
-   one-line coverage the tail step wraps. The sm readout is already smaller than the
-   ladder's first rungs, so its clamps hold its own size there. */
+/* Fit ladder: data-fit comes from the value's length (see readoutFitStep); each step is the next
+   smaller type-scale size. Sizing never truncates — the tail step wraps. The sm readout is already
+   smaller than the ladder's first rungs, so its clamps hold its own size there. */
 .sc-display__value[data-fit="1"] {
   font-size: var(--text-readout-md)
 }
