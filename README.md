@@ -33,7 +33,7 @@ decisions the agents asked about, and reviewing and editing what they produced.
 Setting the workflows up takes time up front; once they exist, each task runs
 fast and the same way every time.
 
-## Quick start
+## Setup Instructions
 
 Prerequisite: **Node 22.22.2** (the repo pins it — see below). Then, from a
 fresh clone:
@@ -71,33 +71,26 @@ npx turbo dev --filter=calc-service
 
 ### Node version note
 
-`.nvmrc` pins Node to `22.22.2`, and `engines.node` in the root
-`package.json` requires `>=22.22.2` within the 22 line. With `nvm use` (or
-`fnm use`) you get exactly the pinned version. If you run a different npm
-major — Node 24+ ships npm 11/12 — npm prints an `EBADDEVENGINES` warning for
-the pinned `devEngines.packageManager` (`^10.0.0`): that warning is working as
-intended, not a misconfiguration. Node 22's own npm is 10. See AGENTS.md's
-`devEngines` rationale for why it is declared the way it is.
+`.nvmrc` pins Node `22.22.2`; `nvm use` (or `fnm use`) gets you there. On a
+newer Node, npm prints an `EBADDEVENGINES` warning about the pinned npm major
+(`^10.0.0`). That is the pin working as intended, not a misconfiguration —
+see AGENTS.md for the rationale.
 
 ### Running it in Docker
 
-The root `Dockerfile` builds three images from one file — `calc-service`,
-`api-gateway`, and `web` (the production SPA bundle behind nginx) — and
-`docker-compose.yml` runs the full stack:
+One `Dockerfile` builds three images — `calc-service`, `api-gateway`, and
+`web` (the SPA bundle behind nginx) — and `docker-compose.yml` runs them:
 
 ```sh
-docker compose up --build -d --wait   # builds the three images, waits for health
+docker compose up --build -d --wait   # builds and waits for health
 open http://localhost:8080             # WEB_PORT=9000 docker compose up … to move it
 docker compose down                    # stops and removes the containers
 ```
 
-Only `web` publishes a port. nginx serves the bundle and proxies `/api/` to the
-gateway, so the browser talks to one origin (the SPA is built with an empty
-`VITE_GATEWAY_URL`, meaning "same origin", and CORS never fires); calc-service
-is reachable only inside the compose network, which is the shape PRD-P0 draws.
-Each image carries a health check — for the two services it is a real `add`
-through `POST /calculate`, since there is no health route yet (PRD-P1 BE-18) —
-and compose starts them in dependency order. Curl the gateway through nginx:
+Only `web` publishes a port. nginx proxies `/api/` to the gateway, so the
+browser talks to one origin and calc-service stays inside the compose
+network. Each image has a health check (a real `add` request, since there is
+no health route yet — PRD-P1 BE-18). Curl the gateway through nginx:
 
 ```sh
 curl -X POST http://localhost:8080/api/v1/calculate \
@@ -105,13 +98,9 @@ curl -X POST http://localhost:8080/api/v1/calculate \
   -d '{"operation":"add","operands":[12,5]}'   # {"result":17}
 ```
 
-To run an image on its own, build one target — e.g. `docker build --target
-api-gateway -t sezzle-gateway .` — and pass the env vars each README documents
-(`CALC_SERVICE_URL`, `CORS_ORIGIN`, …). The `web` image reads
-`GATEWAY_UPSTREAM` at start (default `http://api-gateway:3000`); if the gateway
-is served from another host instead of proxied, build the bundle with
+To serve the gateway from another host instead of proxying it, build with
 `--build-arg VITE_GATEWAY_URL=https://gateway.example` and set that origin as
-the gateway's `CORS_ORIGIN`.
+the gateway's `CORS_ORIGIN`. Each service README lists its env vars.
 
 ## Tests and coverage
 
@@ -221,7 +210,6 @@ exceeds the gateway's 3-second deadline, the gateway answers `502`/`504`
   operations are the scope; a history, accounts, or a `2 + 3 × 4` parser are
   possible future work, not architecture here. See the Non-Goals table in
   [docs/PRD-P0.md](docs/PRD-P0.md).
-
 
 ## Where to go deeper
 
