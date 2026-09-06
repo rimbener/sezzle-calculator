@@ -20,7 +20,6 @@ The goal is to demonstrate production-quality engineering at small scale: clean 
 4. **Robustness:** No input can crash the app. Invalid input returns a clear message in the UI and a structured JSON error from the API — including when the calculation service is down.
 5. **Test coverage:** Unit tests for all operations and edge cases (calc-service), for validation, proxying, and error translation (gateway), and for input, results, and errors (frontend).
 6. **Usability:** A first-time user can perform any operation without instructions, on desktop or mobile (≥360px wide).
-7. **Accessibility:** The UI meets WCAG 2.2 level AA.
 
 ## 3. Non-Goals
 
@@ -133,12 +132,6 @@ The goal is to demonstrate production-quality engineering at small scale: clean 
   - *Acceptance:* components contain no fetch calls; only the client module references the gateway URL.
 - **FE-8 — Unit tests.** Rendering, input building the expected state, a successful calculation (API mocked), each error presentation, and clear/reset.
   - *Acceptance:* suite passes with one documented command; all listed cases exist.
-- **FE-12 — Accessibility (WCAG 2.2 level AA).**
-  - Semantic HTML first; ARIA only where no native element covers the need.
-  - Text contrast ratio of at least 4.5:1.
-  - Landmarks structure the page (`<nav>`, `<main>`, `<aside>` as applicable); every form control has a label; every image has `alt` text.
-  - All controls are native `<button>`/`<input>` elements, so they are focusable and keyboard-operable by default. (Typed shortcuts like digits and operators stay P1 — FE-9 in [PRD-P1.md](PRD-P1.md).)
-  - *Acceptance:* an automated audit (axe or Lighthouse) reports no WCAG AA violations; every control is reachable and operable with the keyboard alone; contrast checks pass on all text.
 
 ### 7.3 Cross-cutting
 
@@ -261,6 +254,6 @@ No external deadline. Suggested order; each phase leaves the repo working and te
 1. **Phase 1 — Contract & calc-service:** shared package (types, schemas, error codes); calc-service with pure calculation modules, operation registry, routes, validation, unit tests.
 2. **Phase 2 — Gateway:** validation, proxy with 3s timeout, 422 pass-through, 502/504 mapping, CORS, tests with mocked downstream.
 3. **Phase 3 — Frontend:** API client from shared types, calculator state hook (settles Open Question 5), UI components, all 7 operations, error and loading states.
-4. **Phase 4 — Polish:** frontend tests, responsive pass, accessibility audit (FE-12), README with diagram and API docs.
+4. **Phase 4 — Polish:** frontend tests, responsive pass, README with diagram and API docs.
 
 Phase 5 (optional P1 work) is defined in [PRD-P1.md](PRD-P1.md).

@@ -4,7 +4,7 @@
 - **title:** Strike FE-12 from the docs
 - **slice:** C — docs strike
 - **criteria:** AC-9
-- **status:** todo
+- **status:** done
 - **paths:**
   - `docs/PRD-P0.md`
   - `docs/spec-phases.md`

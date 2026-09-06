@@ -92,4 +92,4 @@ When building the services, these are hard constraints, not preferences:
 - One error envelope everywhere: `{ "error": { "code": string, "message": string } }`. 400 `VALIDATION_ERROR` for malformed input; 422 `DIVISION_BY_ZERO` / `NEGATIVE_SQRT` / `RESULT_NOT_FINITE` for valid-but-impossible math; 502/504 `SERVICE_UNAVAILABLE` when calc-service is unreachable or exceeds the 3s timeout.
 - Ports and the calc-service URL come from env vars with dev defaults; no hardcoded cross-service URLs.
 - `percentage(x, y)` is "x% of y" = `(x / 100) * y`.
-- Frontend fetch logic lives in one typed client module used through a hook; components contain no fetch calls. Target is WCAG 2.2 AA with native `<button>`/`<input>` elements and a 360px-wide floor.
+- Frontend fetch logic lives in one typed client module used through a hook; components contain no fetch calls. Native `<button>`/`<input>` elements and a 360px-wide floor.
