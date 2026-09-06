@@ -1,4 +1,8 @@
 /* ---- Display ---- */
+:root {
+  --min-height-readout: 76px;
+}
+
 .sc-display {
   position: relative;
   overflow: hidden;
@@ -49,10 +53,12 @@
 }
 
 .sc-display--sm .sc-display__value {
+  min-height: var(--min-height-readout);
   font-size: var(--text-readout-sm)
 }
 
 .sc-display--lg .sc-display__value {
+  min-height: var(--min-height-readout);
   font-size: var(--text-readout-lg)
 }
 
@@ -96,7 +102,7 @@
 }
 
 .sc-display__value[data-fit="10"] {
-  font-size: var(--text-readout-2xs);
+  font-size: var(--text-readout-xs);
   white-space: normal;
   overflow-wrap: anywhere
 }

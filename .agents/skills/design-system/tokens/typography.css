@@ -1,39 +1,41 @@
-:root{
-  --text-2xs:11px;
-  --text-xs:12px;
-  --text-sm:14px;
-  --text-md:16px;
-  --text-lg:19px;
-  --text-xl:23px;
-  --text-2xl:30px;
-  --text-3xl:40px;
-  --text-4xl:56px;
-  --text-readout-sm:28px;
-  --text-readout-md:44px;
-  --text-readout-lg:60px;
-  --text-readout-2xs:8px;
+:root {
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 19px;
+  --text-xl: 23px;
+  --text-2xl: 30px;
+  --text-3xl: 40px;
+  --text-4xl: 56px;
+  --text-readout-sm: 28px;
+  --text-readout-md: 44px;
+  --text-readout-lg: 60px;
+  --text-readout-2xs: 8px;
+  --text-readout-xs: 14px;
+  --text-readout-2xs: 8px;
 
-  --leading-tight:1.05;
-  --leading-snug:1.25;
-  --leading-normal:1.5;
-  --leading-loose:1.7;
+  --leading-tight: 1.05;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
+  --leading-loose: 1.7;
 
-  --tracking-tight:-0.01em;
-  --tracking-normal:0;
-  --tracking-wide:0.06em;
-  --tracking-widest:0.16em;
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.06em;
+  --tracking-widest: 0.16em;
 
-  --weight-regular:400;
-  --weight-medium:500;
-  --weight-bold:700;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
 
   /* Semantic type roles */
-  --type-brand:var(--weight-bold) var(--text-2xl)/var(--leading-tight) var(--font-display);
-  --type-h1:var(--weight-bold) var(--text-3xl)/var(--leading-tight) var(--font-display);
-  --type-h2:var(--weight-bold) var(--text-xl)/var(--leading-snug) var(--font-display);
-  --type-label:var(--weight-bold) var(--text-xs)/1 var(--font-display);
-  --type-body:var(--weight-regular) var(--text-md)/var(--leading-normal) var(--font-body);
-  --type-small:var(--weight-regular) var(--text-sm)/var(--leading-normal) var(--font-body);
-  --type-key:var(--weight-bold) var(--text-lg)/1 var(--font-display);
-  --type-readout:var(--weight-regular) var(--text-readout-md)/1 var(--font-lcd);
+  --type-brand: var(--weight-bold) var(--text-2xl)/var(--leading-tight) var(--font-display);
+  --type-h1: var(--weight-bold) var(--text-3xl)/var(--leading-tight) var(--font-display);
+  --type-h2: var(--weight-bold) var(--text-xl)/var(--leading-snug) var(--font-display);
+  --type-label: var(--weight-bold) var(--text-xs)/1 var(--font-display);
+  --type-body: var(--weight-regular) var(--text-md)/var(--leading-normal) var(--font-body);
+  --type-small: var(--weight-regular) var(--text-sm)/var(--leading-normal) var(--font-body);
+  --type-key: var(--weight-bold) var(--text-lg)/1 var(--font-display);
+  --type-readout: var(--weight-regular) var(--text-readout-md)/1 var(--font-lcd);
 }
