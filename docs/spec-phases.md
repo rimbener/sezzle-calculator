@@ -20,7 +20,7 @@ gateway's contract, then the UI, then the client that calls it).
 | 2   | `p2-api-gateway`           | BE-2, BE-6, BE-10, and the gateway side of BE-1, BE-3, BE-5, BE-8, BE-9, BE-11     | phase 1 (shared package, error codes, internal route)                        |
 | 3   | `p3-calculator-ui`         | FE-1, FE-3, Open Question 5, and the UI half of FE-8                               | phase 1 (the shared request/result types it speaks)                          |
 | 4   | `p4-calculator-api-client` | FE-2, FE-4, FE-5, FE-7, and the network half of FE-8                               | phase 3 (the state machine it feeds), phase 2 (the public contract it calls) |
-| 5   | `p5-quality-and-docs`      | FE-6, FE-12, XC-2                                                                  | phase 4 (the finished UI it audits), 1–2 (the commands the README documents) |
+| 5   | `p5-quality-and-docs`      | FE-6, XC-2                                                                         | phase 4 (the UI it finishes), 1–2 (the commands the README documents)        |
 
 Rationale for the grouping:
 
@@ -45,9 +45,9 @@ Rationale for the grouping:
   phases 3–4 the same way it is split by boundary — the
   downstream code workflow builds TDD-first, so a separate "write the tests"
   phase would spec work that already happened.
-- **Phase 5 is what genuinely comes last:** a responsive pass and an
-  accessibility audit need a working UI to run against, and the README
-  documents commands the first four phases create.
+- **Phase 5 is what genuinely comes last:** a responsive pass needs a
+  working UI to run against, and the README documents commands the first
+  four phases create.
 
 Run them one at a time. A phase is finished when its trail sits under
 `.awc/tasks/done/<task>/` and both its commits are in history; only then start
@@ -135,8 +135,8 @@ Vitest + React Testing Library tests for rendering, key presses building the
 expected state, the request the machine emits, and clear/reset.
 
 **Out of scope:** `fetch` of any kind, the API client module and hook (phase 4),
-error message copy and the busy indicator (phase 4), the responsive pass and
-the accessibility audit (phase 5), keyboard shortcuts (P1 — FE-9), any local
+error message copy and the busy indicator (phase 4), the responsive pass
+(phase 5), keyboard shortcuts (P1 — FE-9), any local
 arithmetic — including "harmless" cases like negating a number for display.
 
 **Answers to have ready:**
@@ -177,9 +177,8 @@ API mocked: a successful calculation, each error presentation, and the busy
 state.
 
 **Out of scope:** the input state machine and the key/display components
-(phase 3 — extend them, do not respec them); the responsive pass and the
-accessibility audit (phase 5); calculating anything locally, including a
-fallback when the backend is down.
+(phase 3 — extend them, do not respec them); the responsive pass (phase 5);
+calculating anything locally, including a fallback when the backend is down.
 
 **Answers to have ready:**
 
@@ -198,19 +197,17 @@ fallback when the backend is down.
 
 ---
 
-## Phase 5 — responsive pass, accessibility audit and README
+## Phase 5 — responsive pass and README
 
 ```
 /prd-to-spec p5-quality-and-docs FE-6, FE-12, XC-2: responsive pass, WCAG 2.2 AA audit and README
 ```
 
 **In scope:** layout from a 360px floor with touch targets >= 44px and no
-horizontal scroll, vanilla CSS only; WCAG 2.2 AA — semantic HTML first, 4.5:1
-text contrast, landmarks, labels on every control, native `<button>`/`<input>`,
-an automated axe or Lighthouse pass with no AA violations, full keyboard
-operability; the README with prerequisites (`.nvmrc`, `engines`), install/run/test
-commands, the architecture diagram, API docs with examples including the
-percentage formula, and the assumptions and trade-offs.
+horizontal scroll, vanilla CSS only; a readout that shrinks to fit long values
+instead of clipping them; the README with prerequisites (`.nvmrc`, `engines`),
+install/run/test commands, the architecture diagram, API docs with examples
+including the percentage formula, and the assumptions and trade-offs.
 
 **Out of scope:** every P1 item in `docs/PRD-P1.md`. Deployment and CI-CD are
 non-goals.
