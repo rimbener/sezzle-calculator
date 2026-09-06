@@ -415,3 +415,9 @@ After those prompts, I ran the workflows in the following order:
 
 **Result:** `packages/ui/src/design-system.tsx` → `design-system-gallery.tsx` (`DesignSystemGallery`); `packages/ui/src/styles/design-system.css` → `design-system-gallery.css`. Barrel export, `styles.css` import, keypad/App tests updated; gallery heading is "Design System Gallery".
 
+
+## 22. Dockerfile for a full-stack deployment
+
+> I'd like to add a Dockerfile for a full-stack deployment, Docker is already running locally, use it to test it, use chrome if you need it too
+
+**Result:** Added a root `Dockerfile` with three targets (`calc-service`, `api-gateway`, `web` — the Vite bundle behind nginx proxying `/api/` to the gateway), `docker-compose.yml` wiring them with health checks and only `web` published on :8080, `docker/nginx/default.conf.template`, `.dockerignore`, and a "Running it in Docker" section in `README.md`. Built and ran the stack locally; verified the API through nginx with curl (200/422/400 and the 502 outage relay) and drove the SPA in Chrome (12 + 5 = 17 over a same-origin POST, 1 ÷ 0 error state).

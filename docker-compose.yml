@@ -1,0 +1,49 @@
+# The full stack from one Dockerfile: `docker compose up --build`, then open
+# http://localhost:8080 (override the host port with WEB_PORT). Only the web
+# container publishes a port — the SPA reaches the gateway through nginx's
+# /api/ proxy, and calc-service stays internal to the compose network, which
+# is the shape PRD-P0 draws.
+name: sezzle-calculator
+
+services:
+  calc-service:
+    build:
+      context: .
+      target: calc-service
+    init: true
+    restart: unless-stopped
+    expose:
+      - "3001"
+
+  api-gateway:
+    build:
+      context: .
+      target: api-gateway
+    init: true
+    restart: unless-stopped
+    environment:
+      CALC_SERVICE_URL: http://calc-service:3001
+      CALC_SERVICE_TIMEOUT_MS: "3000"
+      # Same-origin through the proxy, so CORS never fires; this only matters
+      # if the gateway is ever published and called from the SPA's origin.
+      CORS_ORIGIN: http://localhost:${WEB_PORT:-8080}
+    expose:
+      - "3000"
+    depends_on:
+      calc-service:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        VITE_GATEWAY_URL: ""
+    restart: unless-stopped
+    environment:
+      GATEWAY_UPSTREAM: http://api-gateway:3000
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api-gateway:
+        condition: service_healthy

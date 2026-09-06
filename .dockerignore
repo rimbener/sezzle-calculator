@@ -1,0 +1,33 @@
+# Dependencies and build outputs — the image installs and builds its own.
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/coverage
+
+# Repo tooling and agent state; nothing in here ships.
+.git
+.worktrees
+.awc
+.awc-tmp
+.agents
+.claude
+.codex
+.opencode
+.vscode
+.turbo
+workflows
+docs
+*.zip
+*.sh
+agents-cli.conf
+**/*.md
+**/*.test.ts
+**/*.test.tsx
+**/vitest.config.ts
+**/eslint.config.*
+**/src/test
+
+# Local env files are never baked into an image.
+.env
+.env.*

@@ -1,0 +1,35 @@
+# Serves the built SPA and hands /api/ to the gateway, so the browser talks to
+# one origin: no CORS, no gateway host baked into the bundle. ${...} names are
+# env vars the nginx image's entrypoint substitutes at container start;
+# $names are nginx's own.
+server {
+    listen 80;
+    listen [::]:80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Resolve the upstream per request, so a restarted gateway with a new
+    # address keeps working and nginx boots before the gateway does.
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=10s ipv6=off;
+
+    location /api/ {
+        set $gateway ${GATEWAY_UPSTREAM};
+        proxy_pass $gateway;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Vite hashes asset names, so they can be cached for good.
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

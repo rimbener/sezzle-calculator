@@ -24,16 +24,16 @@ every port and URL resolves from env vars with dev defaults.
 
 Run at the repo root; Turborepo fans them out across all workspaces:
 
-| Command | Does |
-| --- | --- |
-| `npm install` | Installs all workspace dependencies |
-| `npm run dev` | Starts all three dev servers (persistent) |
-| `npm test` | Runs every test suite once |
-| `npm run test:watch` | Watch mode over every suite |
-| `npm run build` | `tsc -b && vite build` per app |
-| `npm run lint` | ESLint across the workspaces |
-| `npm run check-types` | TypeScript project checks |
-| `npm run format` | Prettier over ts/tsx/md |
+| Command               | Does                                      |
+| --------------------- | ----------------------------------------- |
+| `npm install`         | Installs all workspace dependencies       |
+| `npm run dev`         | Starts all three dev servers (persistent) |
+| `npm test`            | Runs every test suite once                |
+| `npm run test:watch`  | Watch mode over every suite               |
+| `npm run build`       | `tsc -b && vite build` per app            |
+| `npm run lint`        | ESLint across the workspaces              |
+| `npm run check-types` | TypeScript project checks                 |
+| `npm run format`      | Prettier over ts/tsx/md                   |
 
 Scope any command to one workspace with a Turbo filter:
 
@@ -51,6 +51,40 @@ major — Node 24+ ships npm 11/12 — npm prints an `EBADDEVENGINES` warning fo
 the pinned `devEngines.packageManager` (`^10.0.0`): that warning is working as
 intended, not a misconfiguration. Node 22's own npm is 10. See AGENTS.md's
 `devEngines` rationale for why it is declared the way it is.
+
+### Running it in Docker
+
+The root `Dockerfile` builds three images from one file — `calc-service`,
+`api-gateway`, and `web` (the production SPA bundle behind nginx) — and
+`docker-compose.yml` runs the full stack:
+
+```sh
+docker compose up --build -d --wait   # builds the three images, waits for health
+open http://localhost:8080             # WEB_PORT=9000 docker compose up … to move it
+docker compose down                    # stops and removes the containers
+```
+
+Only `web` publishes a port. nginx serves the bundle and proxies `/api/` to the
+gateway, so the browser talks to one origin (the SPA is built with an empty
+`VITE_GATEWAY_URL`, meaning "same origin", and CORS never fires); calc-service
+is reachable only inside the compose network, which is the shape PRD-P0 draws.
+Each image carries a health check — for the two services it is a real `add`
+through `POST /calculate`, since there is no health route yet (PRD-P1 BE-18) —
+and compose starts them in dependency order. Curl the gateway through nginx:
+
+```sh
+curl -X POST http://localhost:8080/api/v1/calculate \
+  -H 'content-type: application/json' \
+  -d '{"operation":"add","operands":[12,5]}'   # {"result":17}
+```
+
+To run an image on its own, build one target — e.g. `docker build --target
+api-gateway -t sezzle-gateway .` — and pass the env vars each README documents
+(`CALC_SERVICE_URL`, `CORS_ORIGIN`, …). The `web` image reads
+`GATEWAY_UPSTREAM` at start (default `http://api-gateway:3000`); if the gateway
+is served from another host instead of proxied, build the bundle with
+`--build-arg VITE_GATEWAY_URL=https://gateway.example` and set that origin as
+the gateway's `CORS_ORIGIN`.
 
 ## Architecture
 
@@ -88,15 +122,15 @@ messages, and each code's default HTTP status — lives once in
 Sent as `{ "operation": <name>, "operands": [..] }`; all arithmetic is IEEE-754
 doubles:
 
-| Operation | Arity | Meaning |
-| --- | --- | --- |
-| `add` | 2 | `x + y` |
-| `subtract` | 2 | `x − y` |
-| `multiply` | 2 | `x × y` |
-| `divide` | 2 | `x ÷ y` |
-| `power` | 2 | `x ^ y` (fractional and negative exponents valid) |
-| `sqrt` | 1 | `√x` (fires immediately in the UI — no `=` needed) |
-| `percentage` | 2 | x% of y (the definition — XC-3 — is in [apps/calc-service](apps/calc-service/README.md)) |
+| Operation    | Arity | Meaning                                                                                  |
+| ------------ | ----- | ---------------------------------------------------------------------------------------- |
+| `add`        | 2     | `x + y`                                                                                  |
+| `subtract`   | 2     | `x − y`                                                                                  |
+| `multiply`   | 2     | `x × y`                                                                                  |
+| `divide`     | 2     | `x ÷ y`                                                                                  |
+| `power`      | 2     | `x ^ y` (fractional and negative exponents valid)                                        |
+| `sqrt`       | 1     | `√x` (fires immediately in the UI — no `=` needed)                                       |
+| `percentage` | 2     | x% of y (the definition — XC-3 — is in [apps/calc-service](apps/calc-service/README.md)) |
 
 Domain errors come back as HTTP 422 with the shared error envelope:
 `DIVISION_BY_ZERO`, `NEGATIVE_SQRT`, `RESULT_NOT_FINITE` (overflow or NaN).
