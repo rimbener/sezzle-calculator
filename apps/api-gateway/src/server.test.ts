@@ -20,6 +20,21 @@ const freePort = () =>
     });
   });
 
+/** A port already held by another listener, so `start` has nowhere to bind. */
+const occupiedPort = async () => {
+  const port = await freePort();
+  const holder = createServer();
+  // No host: `serve` binds the wildcard, so the holder must hold the wildcard too.
+  await new Promise<void>((resolve, reject) => {
+    holder.once("error", reject);
+    holder.listen(port, () => resolve());
+  });
+  return {
+    port,
+    release: () => new Promise<void>((resolve) => holder.close(() => resolve())),
+  };
+};
+
 /**
  * No fakes: the real client and global `fetch`, aimed at a port nothing
  * listens on, so the gateway sees a refused connection — twice, 100 ms apart.
@@ -100,6 +115,26 @@ describe("start (AC-18)", () => {
 
     await expect(postAdd(port)).rejects.toThrow();
   });
+
+  it("refuses a second stop: closing an already-stopped server rejects", async () => {
+    const port = await freePort();
+    const stopped = await start(await env(port));
+
+    await stopped.close();
+    running = undefined;
+
+    await expect(stopped.close()).rejects.toThrow(/not running/i);
+  });
+
+  it("rejects instead of resolving when the port is already taken", async () => {
+    const { port, release } = await occupiedPort();
+    try {
+      await expect(start(await env(port))).rejects.toThrow(/EADDRINUSE/);
+    } finally {
+      await release();
+    }
+    running = undefined;
+  });
 });
 
 describe("node src/server.ts — the entry point (AC-18)", () => {
@@ -144,5 +179,30 @@ describe("node src/server.ts — the entry point (AC-18)", () => {
     child = undefined;
 
     await expect(postAdd(port)).rejects.toThrow();
+  });
+
+  it("dies with the bind error when the port is already taken, announcing nothing", async () => {
+    const { port, release } = await occupiedPort();
+    child = spawn(process.execPath, ["src/server.ts"], {
+      cwd: join(import.meta.dirname, ".."),
+      env: { ...process.env, ...(await env(port)) },
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    const process_ = child;
+
+    const outcome = await new Promise<{ code: number | null; out: string; err: string }>((resolve) => {
+      let out = "";
+      let err = "";
+      process_.stdout?.on("data", (chunk: Buffer) => (out += chunk.toString()));
+      process_.stderr?.on("data", (chunk: Buffer) => (err += chunk.toString()));
+      process_.once("exit", (code) => resolve({ code, out, err }));
+    });
+    child = undefined;
+
+    expect(outcome.out).not.toMatch(/listening/);
+    expect(outcome.err).toMatch(/EADDRINUSE/);
+    expect(outcome.code).not.toBe(0);
+
+    await release();
   });
 });

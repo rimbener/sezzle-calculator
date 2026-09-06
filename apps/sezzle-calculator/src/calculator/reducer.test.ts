@@ -194,6 +194,16 @@ describe('reducer — pending is frozen (AC-18)', () => {
 
 const outcome = (o: CalculationOutcome): Action => ({ type: 'outcome', outcome: o })
 
+describe('reducer — a stray outcome is ignored while entering', () => {
+  it('returns the entering state unchanged, entry and recorded operation included', () => {
+    const entering = run(digit('1'), digit('2'), operation('add'), digit('5'))
+
+    expect(reducer(entering, outcome({ result: 99 }))).toBe(entering)
+    expect(reducer(entering, outcome(failure))).toBe(entering)
+    expect(operands(entering)).toEqual(['12', '5'])
+  })
+})
+
 describe('reducer — a result outcome (AC-19)', () => {
   it('carries the number and keeps the completed calculation', () => {
     const pending = run(digit('1'), digit('2'), operation('add'), digit('5'), equals)

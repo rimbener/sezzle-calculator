@@ -31,7 +31,11 @@ export const start = (
   });
 
 // Entry point under `node src/server.ts`; a no-op when imported.
+// Tested through real child processes, which no in-process coverage hook can
+// see — the suite proves it, the report just cannot attribute it.
+/* v8 ignore start */
 if (import.meta.main) {
   const { port } = await start(process.env);
   console.log(`calc-service listening on port ${port}`);
 }
+/* v8 ignore stop */

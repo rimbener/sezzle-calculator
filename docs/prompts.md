@@ -421,3 +421,57 @@ After those prompts, I ran the workflows in the following order:
 > I'd like to add a Dockerfile for a full-stack deployment, Docker is already running locally, use it to test it, use chrome if you need it too
 
 **Result:** Added a root `Dockerfile` with three targets (`calc-service`, `api-gateway`, `web` — the Vite bundle behind nginx proxying `/api/` to the gateway), `docker-compose.yml` wiring them with health checks and only `web` published on :8080, `docker/nginx/default.conf.template`, `.dockerignore`, and a "Running it in Docker" section in `README.md`. Built and ran the stack locally; verified the API through nginx with curl (200/422/400 and the 502 outage relay) and drove the SPA in Chrome (12 + 5 = 17 over a same-origin POST, 1 ÷ 0 error state).
+
+## 23. Unit tests for @repo/ui components
+
+### 23.1 — Toggle
+
+> add unit tests for @packages/ui/src/toggle.tsx
+
+**Result:** Created `packages/ui/src/toggle.test.tsx` — 13 tests covering the switch contract (`role="switch"`, `aria-checked`, focusability), click and Space/Enter interactions firing `onChange` (with `preventDefault` checked), every key ignored when disabled, label rendering and `className` composition, and the barrel export. Lint clean.
+
+### 23.2 — Every remaining component
+
+> add unit tests for the components in packages/ui/src. skip the files if a unit test already exists
+
+**Result:** Created five component suites — `badge.test.tsx`, `busy-lamp.test.tsx` (with a `steps(1, end)` blink CSS test), `button.test.tsx` (with press/disabled CSS tests), `card.test.tsx`, `input.test.tsx` (label/aria wiring) — plus `key.test.tsx` (faces, `ariaLabel`, `aria-pressed`, grid span, onPress) and `design-system-gallery.test.tsx` (every section, wired Toggle and dismissible Callout). Skipped `callout`, `display`, `keypad` and `toggle` as already tested. Three initial failures fixed (duplicate "Disabled" buttons in the gallery, the switch's empty accessible name, jsdom firing React `onChange` on a disabled input); 97 tests green.
+
+## 24. Server bind-error paths
+
+### 24.1 — calc-service
+
+> add unit tests for the error path on line 36 of @apps/calc-service/src/server.ts
+
+**Result:** Added two tests to `apps/calc-service/src/server.test.ts`: `start` rejects with `EADDRINUSE` instead of resolving when the port is held (the `server.once("error", reject)` path), and the spawned `node src/server.ts` entry point dies non-zero with `EADDRINUSE` on stderr, announcing nothing. Learned en route that the occupant listener must hold the **wildcard** host — with `SO_REUSEADDR` the OS happily binds the wildcard alongside a `127.0.0.1` holder, silently skipping the error path.
+
+### 24.2 — api-gateway, same treatment
+
+> now do the same test for @apps/api-gateway/src/server.test.ts
+
+**Result:** Mirrored the wildcard-holding `occupiedPort` helper and both bind-failure tests into `apps/api-gateway/src/server.test.ts` (`start` rejects with `EADDRINUSE`; the entry point dies non-zero without printing `api-gateway listening on port …`). Full gateway suite (88 tests), lint and typecheck green.
+
+## 25. Coverage gaps explained and closed
+
+### 25.1 — Why the entry-block lines read as untested
+
+> why "npm run test:coverage" still reports those lines as not tested?
+
+**Result:** Answered: the `import.meta.main` entry block only executes in the spawned child process, which Vitest's V8 coverage cannot instrument; in-process `import.meta.main` is deliberately false. Wrapped both services' entry blocks in `/* v8 ignore start */ … /* v8 ignore stop */` with rationale comments (`apps/calc-service/src/server.ts`, `apps/api-gateway/src/server.ts`) — both files now report 100% lines.
+
+### 25.2 — The close-callback ternaries
+
+> now lines 25 of @apps/calc-service/src/server.ts and 32 of @apps/api-gateway/src/server.ts are not covered
+
+**Result:** Added a "refuses a second stop" test to each service's `server.test.ts`: a second `close()` on an already-stopped server rejects with Node's "Server is not running" error, exercising the `fail(error)` arm of the `close` callback — no ignore comment needed. Both `server.ts` files at 100% statements, lines and functions.
+
+## 26. One test for the reducer's stray-outcome arm
+
+> now add one test for line 97 on @apps/sezzle-calculator/src/calculator/reducer.ts
+
+**Result:** Added one test to `apps/sezzle-calculator/src/calculator/reducer.test.ts` — a stray `outcome` dispatched to an `entering` state returns it unchanged (`toBe` identity), covering reducer.ts:97. `reducer.ts` at 100% lines; 150 SPA tests green.
+
+## 27. Fix App.tsx:6 coverage
+
+> fix App.tsx:6
+
+**Result:** Diagnosed the false gap: the React Compiler rewrites `App`'s body into a memo-cache block whose ranges map to no original statement — ignoring one line only moved the gap to the `return`. Wrapped the component in `apps/sezzle-calculator/src/App.tsx` in `/* v8 ignore start */ … /* v8 ignore stop */` with a rationale comment (its execution is proven by `App.integration.test.tsx`). Also added `coverage` to the app's `globalIgnores` in `eslint.config.js`, which any coverage run had been breaking. SPA coverage now 100% on all four metrics; lint, typecheck and all 150 tests green.
