@@ -8,7 +8,7 @@ import turbo from "../../../turbo.json" with { type: "json" };
 describe("root turbo.json task graph", () => {
   it("keeps the six root tasks", () => {
     expect(Object.keys(turbo.tasks).sort()).toEqual(
-      ["build", "check-types", "dev", "lint", "test", "test:watch"].sort(),
+      ["build", "check-types", "dev", "lint", "test", "test:coverage", "test:watch"].sort(),
     );
   });
 
