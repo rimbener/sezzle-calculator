@@ -22,7 +22,6 @@ npm run dev          # all dev servers (persistent, uncached)
 npm run build        # tsc -b && vite build per app
 npm run lint
 npm run check-types
-npm run format       # prettier --write on ts/tsx/md
 ```
 
 Scope to one workspace with a Turbo filter — package names, not paths:
@@ -39,7 +38,7 @@ Node >= 22.22.2 is pinned via `engines` in the root `package.json`. `devEngines.
 - `^10.0.0` is the major that stock Node 22 ships, matching `engines.node`. On a different npm major every command prints an `EBADDEVENGINES` warning — that is the warning working as intended, not a misconfiguration. Node 24+ ships npm 11/12 and will warn; run the 22 line, or upgrade both together.
 - `22.22.2` is not arbitrary: it is the floor `jsdom` 30 asks for within the 22 line (`^22.22.2 || ^24.15.0 || >=26`), above `eslint` 10's `^22.13.0` and `vitest` 5 / `vite` 8's `^22.12.0`. It also clears 22.18, where Node began stripping types without a flag — `calc-service` and `api-gateway` run their `.ts` sources directly and import `@repo/contracts` across the workspace symlink, so anything lower cannot boot either service. `@types/node` tracks the same line at 22.20.1 in all four workspaces that depend on it.
 
-Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`), with `test:watch` (`vitest watch`) as the persistent watch-mode counterpart; the suites are `packages/contracts/src/*.test.ts`, `apps/calc-service/src/**/*.test.ts`, `apps/api-gateway/src/*.test.ts`, `apps/sezzle-calculator/src/**/*.test.ts(x)` and `packages/ui/src/*.test.tsx`. The two React workspaces render with React Testing Library under jsdom, and each registers `afterEach(cleanup)` in its `src/test/setup.ts` — Vitest runs without globals here, so Testing Library does not auto-clean on its own. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
+Tests: Vitest, run per workspace by the root `test` task (`vitest run --passWithNoTests`), with `test:watch` (`vitest watch`) as the persistent watch-mode counterpart and `test:coverage` (`vitest run --coverage`, V8 provider, report under each workspace's gitignored `coverage/`) as the one-shot coverage run; the suites are `packages/contracts/src/*.test.ts`, `apps/calc-service/src/**/*.test.ts`, `apps/api-gateway/src/*.test.ts`, `apps/sezzle-calculator/src/**/*.test.ts(x)` and `packages/ui/src/*.test.tsx`. The two React workspaces render with React Testing Library under jsdom, and each registers `afterEach(cleanup)` in its `src/test/setup.ts` — Vitest runs without globals here, so Testing Library does not auto-clean on its own. The PRD settles the tooling as **Vitest everywhere, React Testing Library on the frontend** — keep it that way rather than introducing Jest.
 
 ## Monorepo layout
 

@@ -25,6 +25,9 @@ export const config = [
     },
   },
   {
+    ignores: ['coverage/**', 'dist/**'],
+  },
+  {
     plugins: {
       onlyWarn,
     },

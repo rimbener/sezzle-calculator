@@ -31,9 +31,7 @@
       "interactive": true
     },
     "test:coverage": {
-      "cache": false,
-      "persistent": true,
-      "interactive": true
+      "cache": false
     },
     "dev": {
       "cache": false,
