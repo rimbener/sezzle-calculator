@@ -96,7 +96,7 @@ doubles:
 | `divide` | 2 | `x ÷ y` |
 | `power` | 2 | `x ^ y` (fractional and negative exponents valid) |
 | `sqrt` | 1 | `√x` (fires immediately in the UI — no `=` needed) |
-| `percentage` | 2 | x% of y = `(x / 100) × y` — so `%` of `15` over `200` is `30` |
+| `percentage` | 2 | x% of y (the definition — XC-3 — is in [apps/calc-service](apps/calc-service/README.md)) |
 
 Domain errors come back as HTTP 422 with the shared error envelope:
 `DIVISION_BY_ZERO`, `NEGATIVE_SQRT`, `RESULT_NOT_FINITE` (overflow or NaN).

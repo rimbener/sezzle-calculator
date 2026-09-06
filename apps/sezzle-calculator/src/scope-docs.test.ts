@@ -128,6 +128,25 @@ describe('the app README describes what the calculator does today', () => {
   })
 })
 
+// XC-3's percentage definition lives in `apps/calc-service/README.md`; the spec's
+// non-goals let the root README's operation table keep the phrase and reference it, not restate it.
+describe('the root README references XC-3, not restates it', () => {
+  const readme = readFileSync(resolve(__dirname, '../../../README.md'), 'utf8')
+  const percentageRow = line(readme, '| `percentage` |')
+
+  it('keeps the phrase without the formula or the worked example', () => {
+    expect(percentageRow).not.toBe('')
+    expect(percentageRow).toMatch(/x% of/)
+    expect(percentageRow).not.toMatch(/x \/ 100/)
+    expect(percentageRow).not.toMatch(/`30`/)
+  })
+
+  it('still points at calc-service for the percentage definition', () => {
+    expect(readme).toMatch(/percentage definition/)
+    expect(readme).toMatch(/apps\/calc-service/)
+  })
+})
+
 // Every pin above reads a file outside this workspace, which Turbo's default hash skips,
 // so a cached pass would replay over a docs edit. turbo.json lists them as `test` inputs.
 describe('the test task hashes the docs it pins', () => {
