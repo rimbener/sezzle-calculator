@@ -1,0 +1,42 @@
+/* ---- Card ---- */
+.sc-card {
+  background: var(--surface-card);
+  border: var(--border-2) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel)
+}
+
+.sc-card--sunken {
+  background: var(--surface-sunken)
+}
+
+.sc-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-2) solid var(--border-strong)
+}
+
+.sc-card__eyebrow {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--text-muted)
+}
+
+.sc-card__title {
+  font: var(--type-h2);
+  color: var(--text-heading)
+}
+
+.sc-card__body {
+  padding: var(--space-5)
+}
+
+.sc-card__foot {
+  padding: var(--space-4) var(--space-5);
+  border-top: var(--border-2) dashed var(--border-soft);
+  font: var(--type-small);
+  color: var(--text-muted)
+}

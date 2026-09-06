@@ -1,0 +1,11 @@
+/* ---- Keypad ---- */
+.sc-keypad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(var(--key-size-sm), 1fr));
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface-shell);
+  border: var(--border-2) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel)
+}

@@ -1,0 +1,122 @@
+/* ---- Display ---- */
+.sc-display {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-readout);
+  border: var(--border-2) solid var(--border-readout);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-inset-lcd)
+}
+
+.sc-display__scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .18) 0 var(--border-1), transparent var(--border-1) var(--border-3))
+}
+
+.sc-display__meta {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  font: var(--type-label);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--text-readout-muted)
+}
+
+.sc-display__value {
+  max-width: 100%;
+  white-space: nowrap;
+  font-family: var(--font-lcd);
+  font-size: var(--text-readout-md);
+  line-height: 1;
+  color: var(--text-readout);
+  text-shadow: var(--glow-lcd)
+}
+
+.sc-display__hint {
+  font-family: var(--font-lcd);
+  font-size: var(--text-sm);
+  color: var(--text-readout-muted);
+  text-align: right
+}
+
+.sc-display--sm .sc-display__value {
+  font-size: var(--text-readout-sm)
+}
+
+.sc-display--lg .sc-display__value {
+  font-size: var(--text-readout-lg)
+}
+
+/* Fit ladder: data-fit comes from the value's length (see readoutFitStep); each step is the next
+   smaller type-scale size. Sizing never truncates — the tail step wraps. The sm readout is already
+   smaller than the ladder's first rungs, so its clamps hold its own size there. */
+.sc-display__value[data-fit="1"] {
+  font-size: var(--text-readout-md)
+}
+
+.sc-display__value[data-fit="2"] {
+  font-size: var(--text-2xl)
+}
+
+.sc-display__value[data-fit="3"] {
+  font-size: var(--text-readout-sm)
+}
+
+.sc-display__value[data-fit="4"] {
+  font-size: var(--text-xl)
+}
+
+.sc-display__value[data-fit="5"] {
+  font-size: var(--text-lg)
+}
+
+.sc-display__value[data-fit="6"] {
+  font-size: var(--text-md)
+}
+
+.sc-display__value[data-fit="7"] {
+  font-size: var(--text-sm)
+}
+
+.sc-display__value[data-fit="8"] {
+  font-size: var(--text-xs)
+}
+
+.sc-display__value[data-fit="9"] {
+  font-size: var(--text-2xs)
+}
+
+.sc-display__value[data-fit="10"] {
+  font-size: var(--text-readout-2xs);
+  white-space: normal;
+  overflow-wrap: anywhere
+}
+
+.sc-display--sm .sc-display__value[data-fit="1"],
+.sc-display--sm .sc-display__value[data-fit="2"] {
+  font-size: var(--text-readout-sm)
+}
+
+.sc-display--busy .sc-display__value {
+  opacity: .55;
+  animation: lcd-blink var(--blink) steps(1, end) infinite
+}
+
+.sc-display--error .sc-display__meta,
+.sc-display--error .sc-display__hint {
+  color: var(--sunset)
+}
+
+.sc-display--error .sc-display__value {
+  color: var(--sunset);
+  text-shadow: none
+}

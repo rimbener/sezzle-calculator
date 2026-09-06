@@ -44,7 +44,7 @@ function Specimen({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /** Living gallery: one specimen of every @repo/ui component, in every variant. */
-export function DesignSystem() {
+export function DesignSystemGallery() {
   const [toggleOn, setToggleOn] = useState(true);
   const [activeKey, setActiveKey] = useState<KeyFace | null>("operator");
   const [dismissed, setDismissed] = useState(false);
@@ -52,7 +52,7 @@ export function DesignSystem() {
   return (
     <main className="ds-page">
       <header className="ds-masthead">
-        <h1 className="ds-masthead__title">Design System</h1>
+        <h1 className="ds-masthead__title">Design System Gallery</h1>
         <Badge tone="info">@repo/ui</Badge>
         <BusyLamp state="up" label="Live" />
       </header>

@@ -1,0 +1,74 @@
+/* ---- Callout ---- */
+.sc-callout {
+  display: flex;
+  overflow: hidden;
+  background: var(--paper-0);
+  border: var(--border-2) solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-key)
+}
+
+.sc-callout__bar {
+  flex: 0 0 10px;
+  width: 10px;
+  border-right: var(--border-2) solid var(--border-strong)
+}
+
+.sc-callout--danger .sc-callout__bar {
+  background: var(--sunset)
+}
+
+.sc-callout--warning .sc-callout__bar {
+  background: var(--mustard)
+}
+
+.sc-callout--success .sc-callout__bar {
+  background: var(--teal)
+}
+
+.sc-callout--info .sc-callout__bar {
+  background: var(--sky)
+}
+
+.sc-callout__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5)
+}
+
+.sc-callout__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3)
+}
+
+.sc-callout__title {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-heading)
+}
+
+.sc-callout__code {
+  font: var(--type-label);
+  font-family: var(--font-mono);
+  color: var(--text-muted)
+}
+
+.sc-callout__text {
+  font: var(--type-small);
+  color: var(--text-body)
+}
+
+.sc-callout__x {
+  align-self: stretch;
+  width: 40px;
+  background: transparent;
+  border: 0;
+  border-left: var(--border-2) dashed var(--border-soft);
+  font: var(--type-key);
+  color: var(--ink-1);
+  cursor: pointer
+}

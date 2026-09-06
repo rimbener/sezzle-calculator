@@ -8,7 +8,7 @@ export { Callout } from "./callout";
 export type { CalloutProps, CalloutTone } from "./callout";
 export { Card } from "./card";
 export type { CardProps } from "./card";
-export { DesignSystem } from "./design-system";
+export { DesignSystemGallery } from "./design-system-gallery";
 export { Display } from "./display";
 export type { DisplayProps, DisplayState } from "./display";
 export { Input } from "./input";

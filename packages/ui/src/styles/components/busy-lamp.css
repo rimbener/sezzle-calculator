@@ -1,0 +1,34 @@
+/* ---- BusyLamp ---- */
+.sc-lamp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font: var(--type-label);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--text-muted)
+}
+
+.sc-lamp__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  border: var(--border-2) solid var(--border-strong);
+  background: var(--ink-3)
+}
+
+.sc-lamp--busy .sc-lamp__dot {
+  background: var(--mustard);
+  box-shadow: 0 0 8px var(--mustard);
+  animation: lcd-blink var(--blink) steps(1, end) infinite
+}
+
+.sc-lamp--up .sc-lamp__dot {
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal)
+}
+
+.sc-lamp--down .sc-lamp__dot {
+  background: var(--sunset);
+  box-shadow: 0 0 8px var(--sunset)
+}

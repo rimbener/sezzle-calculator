@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { DesignSystem } from "./design-system";
+import { DesignSystemGallery } from "./design-system-gallery";
 import * as barrel from "./index";
 import { Key } from "./key";
 import { Keypad } from "./keypad";
@@ -42,9 +42,7 @@ describe("@repo/ui barrel", () => {
 });
 
 describe("sc-keypad styles", () => {
-  const css = readFileSync(resolve(__dirname, "styles/components.css"), "utf8");
-  /** Everything from the Keypad section heading to the next section heading. */
-  const section = css.split(/\/\* ---- Keypad ---- \*\//)[1]?.split(/\/\* ---- /)[0] ?? "";
+  const section = readFileSync(resolve(__dirname, "styles/components/keypad.css"), "utf8");
   const pad = section.match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? "";
 
   it("lays the pad out as a grid with the standard hard border and offset panel shadow", () => {
@@ -62,7 +60,7 @@ describe("sc-keypad styles", () => {
 
 describe("design-system gallery", () => {
   it("shows a Keypad section built from the component", () => {
-    render(<DesignSystem />);
+    render(<DesignSystemGallery />);
 
     const heading = screen.getByRole("heading", { name: "Keypad" });
     const section = heading.closest("section");
@@ -81,10 +79,9 @@ describe("Keypad purity", () => {
 });
 
 describe("keys meet the 44px touch floor at any width, 360px included (AC-2)", () => {
-  const css = readFileSync(resolve(__dirname, "styles/components.css"), "utf8");
-  const sectionAfter = (marker: string) => css.split(new RegExp(`/\\* ---- ${marker} ---- \\*/`))[1]?.split(/\/\* ---- /)[0] ?? "";
-  const key = sectionAfter("Key").match(/\.sc-key\s*\{([^}]*)\}/)?.[1] ?? "";
-  const pad = sectionAfter("Keypad").match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? "";
+  const sectionAfter = (file: string) => readFileSync(resolve(__dirname, `styles/components/${file}.css`), "utf8");
+  const key = sectionAfter("key").match(/\.sc-key\s*\{([^}]*)\}/)?.[1] ?? "";
+  const pad = sectionAfter("keypad").match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? "";
   const spacing = readFileSync(resolve(__dirname, "styles/tokens/spacing.css"), "utf8");
   const token = (name: string) => Number(spacing.match(new RegExp(`--${name}:\\s*([\\d.]+)px`))?.[1]);
 

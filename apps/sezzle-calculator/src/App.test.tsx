@@ -10,7 +10,7 @@ describe('App', () => {
   it('no longer renders the design-system gallery anywhere', () => {
     render(<App />)
 
-    expect(screen.queryByRole('heading', { name: 'Design System' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Design System Gallery' })).toBeNull()
   })
 })
 
@@ -238,8 +238,7 @@ describe('App shell styles — the 360px floor (AC-1)', () => {
   const css = readFileSync(resolve(__dirname, 'App.css'), 'utf8')
   const shell = css.match(/\.calculator\s*\{([^}]*)\}/)?.[1] ?? ''
   const spacing = readFileSync(resolve(__dirname, '../../../packages/ui/src/styles/tokens/spacing.css'), 'utf8')
-  const keypad = readFileSync(resolve(__dirname, '../../../packages/ui/src/styles/components.css'), 'utf8')
-    .split('/* ---- Keypad ---- */')[1]?.split('/* ---- ')[0] ?? ''
+  const keypad = readFileSync(resolve(__dirname, '../../../packages/ui/src/styles/components/keypad.css'), 'utf8')
   const token = (name: string) => Number(spacing.match(new RegExp(`--${name}:\\s*([\\d.]+)px`))?.[1])
   const pad = keypad.match(/\.sc-keypad\s*\{([^}]*)\}/)?.[1] ?? ''
 

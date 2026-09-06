@@ -1,0 +1,81 @@
+/* ---- Key ---- */
+.sc-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: var(--key-size);
+  min-width: var(--tap-min);
+  border: var(--border-2) solid var(--border-strong);
+  border-radius: var(--radius-md);
+  font: var(--type-key);
+  box-shadow: var(--shadow-key-lg);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out)
+}
+
+.sc-key:active:not(:disabled),
+.sc-key[aria-pressed="true"] {
+  box-shadow: none;
+  transform: translate(4px, 4px)
+}
+
+.sc-key:disabled {
+  background: var(--state-disabled);
+  color: var(--ink-2);
+  box-shadow: none;
+  cursor: not-allowed
+}
+
+.sc-key__sub {
+  font: var(--type-label);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  opacity: .72
+}
+
+.sc-key--number {
+  background: var(--key-number);
+  color: var(--ink-0)
+}
+
+.sc-key--number:hover:not(:disabled) {
+  background: var(--paper-1)
+}
+
+.sc-key--operator {
+  background: var(--key-operator);
+  color: var(--ink-0)
+}
+
+.sc-key--operator:hover:not(:disabled) {
+  background: var(--mustard-deep)
+}
+
+.sc-key--function {
+  background: var(--key-function);
+  color: var(--ink-0)
+}
+
+.sc-key--function:hover:not(:disabled) {
+  background: var(--paper-3)
+}
+
+.sc-key--equals {
+  background: var(--key-equals);
+  color: var(--paper-0)
+}
+
+.sc-key--equals:hover:not(:disabled) {
+  background: var(--teal-deep)
+}
+
+.sc-key--clear {
+  background: var(--key-clear);
+  color: var(--paper-0)
+}
+
+.sc-key--clear:hover:not(:disabled) {
+  background: var(--sunset-deep)
+}

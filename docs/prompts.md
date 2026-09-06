@@ -378,8 +378,40 @@ Session started through awc (agentic-workflow-creator), which loaded the `workfl
 
 **Result:** Rewrote `docs/spec-phases.md` as five `prd-to-spec` runs instead of four — phase 3 (`p3-calculator-ui`: FE-1, FE-3, Open Question 5, UI half of FE-8, no `fetch`) now emits a calculation request and consumes an outcome, phase 4 (`p4-calculator-api-client`: FE-2, FE-4, FE-5, FE-7, network half of FE-8) adds the typed client, hook, busy state and the four error presentations, and the old phase 4 became phase 5 (`p5-quality-and-docs`). Updated the order table's dependency column, added a rationale bullet for the network-boundary split, and left `docs/PRD-P0.md` §11 unchanged with a note in the intro.
 
-From now on, I ran the workflows in the following order:
+After those prompts, I ran the workflows in the following order:
 
 /prd-to-spec p1-contract-calc-service XC-1, XC-3, BE-4, BE-5, BE-8 + calc-service half of BE-1, BE-3, BE-9, BE-11: shared contract package and calc-service
 
 ./spec-to-code.sh p1-contract-calc-service claude
+
+/prd-to-spec p3-calculator-ui FE-1, FE-3, Open Question 5, UI half of FE-8, no `fetch`
+
+./spec-to-code.sh p3-calculator-ui claude
+
+/prd-to-spec p2-api-gateway BE-2, BE-6, BE-10 + gateway half of BE-1,
+  BE-3, BE-5, BE-8, BE-9, BE-11: api-gateway with proxy and failure
+  mapping
+./spec-to-code.sh p2-api-gateway claude
+
+/prd-to-spec p4-calculator-api-client FE-2, FE-4, FE-5, FE-7, network half of FE-8
+
+./spec-to-code.sh p4-api-client opencode
+
+/prd-to-spec p5-quality-and-docs FE-6, FE-12, XC-2: responsive pass, WCAG 2.2 AA audit and README
+
+./spec-to-code.sh p5-quality-and-docs opencode
+
+## 21. Component CSS split and gallery rename
+
+### 21.1 — Split components.css
+
+> refactor @packages/ui/src/styles/components.css split it into one file for each component: badge, button, etc. leave shared styles in @packages/ui/src/styles/components.css
+
+**Result:** Split `packages/ui/src/styles/components.css` into `packages/ui/src/styles/components/{badge,button,busy-lamp,callout,card,display,input,key,keypad,toggle}.css`. `components.css` now only `@import`s those files and keeps the shared `prefers-reduced-motion` rules. `styles.css` still imports `components.css`.
+
+### 21.2 — Rename to DesignSystemGallery
+
+> now rename @packages/ui/src/design-system.tsx @packages/ui/src/styles/design-system.css into DesignSystemGallery, rename files and names
+
+**Result:** `packages/ui/src/design-system.tsx` → `design-system-gallery.tsx` (`DesignSystemGallery`); `packages/ui/src/styles/design-system.css` → `design-system-gallery.css`. Barrel export, `styles.css` import, keypad/App tests updated; gallery heading is "Design System Gallery".
+
