@@ -27,3 +27,5 @@ Fix step (review-slice-1, both findings resolved):
 
 - Fix 1 (finding 1) — the AC-10 no-tooling pin: `no-a11y-tooling.test.ts` written against the clean tree (green — the clause already holds), then proven to bite: `axe-core` injected temporarily into the app's devDependencies → RED naming the hit, reverted → green. Scan surface pinned (root + all seven workspaces).
 - Fix 2 (finding 2) — the display-fit import becomes `@repo/ui/display`, through the export map as AGENTS.md documents; pure test refactor, its suite green unchanged (the file's own ladder-coverage test is the pin that the move preserves).
+
+closing-commit: 25a2dce
